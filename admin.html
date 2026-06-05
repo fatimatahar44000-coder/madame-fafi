@@ -1,0 +1,1309 @@
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Madame Fafi — Super Admin</title> 
+  <style> 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } 
+ 
+    :root { 
+      --bg: #0d0d0f; 
+      --surface: #18181c; 
+      --surface2: #222228; 
+      --border: #2e2e36; 
+      --text: #e8e8ec; 
+      --muted: #888; 
+      --accent: #9b59b6; 
+      --accent2: #7d3cbf; 
+      --green: #27ae60; 
+      --red: #e74c3c; 
+      --yellow: #f39c12; 
+      --blue: #3498db; 
+    } 
+ 
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; 
+      font-size: 14px; 
+      line-height: 1.5; 
+      min-height: 100vh; 
+    } 
+ 
+    #login-screen { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+      padding: 20px; 
+    } 
+    .login-card { 
+      background: var(--surface); 
+      border: 1px solid var(--border); 
+      border-radius: 12px; 
+      padding: 40px; 
+      width: 100%; 
+      max-width: 380px; 
+    } 
+    .login-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; } 
+    .login-card p { color: var(--muted); margin-bottom: 28px; font-size: 13px; } 
+    .login-card label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; } 
+    .login-card input { 
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; 
+      color: var(--text); padding: 10px 14px; font-size: 14px; margin-bottom: 20px; outline: none; transition: border-color 0.15s; 
+    } 
+    .login-card input:focus { border-color: var(--accent); } 
+    .btn-primary { 
+      width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; 
+      padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.15s; 
+    } 
+    .btn-primary:hover { background: var(--accent2); } 
+    .btn-primary:disabled { opacity: 0.6; cursor: default; } 
+    #login-error { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; } 
+ 
+    #dashboard { display: none; } 
+ 
+    .topbar { 
+      background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; 
+      height: 56px; display: flex; align-items: center; justify-content: space-between; 
+      position: sticky; top: 0; z-index: 100; 
+    } 
+    .topbar-brand { font-weight: 700; font-size: 16px; } 
+    .topbar-brand span { color: var(--accent); } 
+    .btn-logout { 
+      background: transparent; color: var(--muted); border: 1px solid var(--border); 
+      border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; transition: color 0.15s, border-color 0.15s; 
+    } 
+    .btn-logout:hover { color: var(--text); border-color: var(--text); } 
+ 
+    .content { padding: 28px; max-width: 1400px; margin: 0 auto; } 
+ 
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; } 
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; } 
+    .stat-card .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; } 
+    .stat-card .stat-value { font-size: 28px; font-weight: 700; } 
+    .stat-card .stat-value.purple { color: var(--accent); } 
+    .stat-card .stat-value.green { color: var(--green); } 
+ 
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; } 
+    .section-title { font-size: 16px; font-weight: 600; } 
+ 
+    .search-input { 
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; 
+      color: var(--text); padding: 8px 14px; font-size: 13px; outline: none; width: 260px; transition: border-color 0.15s; 
+    } 
+    .search-input:focus { border-color: var(--accent); } 
+ 
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; } 
+    table { width: 100%; border-collapse: collapse; } 
+    thead { background: var(--surface2); } 
+    th { padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; white-space: nowrap; } 
+    td { padding: 13px 16px; border-top: 1px solid var(--border); vertical-align: middle; } 
+    tr:hover td { background: rgba(255,255,255,0.02); } 
+ 
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; } 
+    .badge-unlimited { background: rgba(155,89,182,0.2); color: #c39bd3; border: 1px solid rgba(155,89,182,0.3); } 
+    .badge-admin { background: rgba(243,156,18,0.15); color: #f4ac33; border: 1px solid rgba(243,156,18,0.3); } 
+    .badge-credits { background: rgba(39,174,96,0.15); color: #58d68d; border: 1px solid rgba(39,174,96,0.25); } 
+ 
+    .action-btn { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; } 
+    .action-btn:hover { border-color: var(--accent); color: var(--accent); } 
+    .action-btn.danger:hover { border-color: var(--red); color: var(--red); } 
+    .action-btn.success { border-color: rgba(39,174,96,0.5); color: var(--green); } 
+    .action-btn.success:hover { background: rgba(39,174,96,0.1); } 
+    .action-btn.email-btn { border-color: rgba(232,121,249,0.5); color: #e879f9; } 
+    .action-btn.email-btn:hover { background: rgba(232,121,249,0.1); border-color: #e879f9; } 
+ 
+    .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; } 
+    .email-cell { font-size: 13px; color: var(--muted); } 
+    .username-cell { font-weight: 500; } 
+    .empty-state { padding: 48px; text-align: center; color: var(--muted); } 
+ 
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); } 
+    .modal-overlay.hidden { display: none; } 
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; width: 100%; max-width: 760px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; } 
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; } 
+    .modal-header h2 { font-size: 16px; font-weight: 600; } 
+    .modal-close { background: transparent; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 4px; transition: color 0.15s; } 
+    .modal-close:hover { color: var(--text); } 
+    .modal-body { padding: 24px; overflow-y: auto; } 
+ 
+    .modal-tabs { display: flex; gap: 4px; margin-bottom: 20px; } 
+    .tab-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 7px 16px; font-size: 13px; cursor: pointer; transition: all 0.15s; } 
+    .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); } 
+    .tab-btn:hover:not(.active) { color: var(--text); border-color: #555; } 
+    .tab-content { display: none; } 
+    .tab-content.active { display: block; } 
+ 
+    .credits-row { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; } 
+    .credits-input { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 14px; font-size: 14px; width: 140px; outline: none; transition: border-color 0.15s; } 
+    .credits-input:focus { border-color: var(--accent); } 
+    .btn-add-credits { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; white-space: nowrap; } 
+    .btn-add-credits:hover { background: var(--accent2); } 
+    .credits-feedback { font-size: 13px; color: var(--green); } 
+ 
+    .history-list { display: flex; flex-direction: column; gap: 10px; } 
+    .history-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; } 
+    .history-item .hi-title { font-weight: 500; font-size: 13px; } 
+    .history-item .hi-meta { font-size: 12px; color: var(--muted); margin-top: 2px; } 
+    .history-item .hi-badge { text-align: right; } 
+ 
+    .user-meta-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; } 
+    .user-meta-item { display: flex; flex-direction: column; gap: 2px; } 
+    .user-meta-item span:first-child { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; } 
+    .user-meta-item span:last-child { font-size: 14px; font-weight: 500; } 
+ 
+    .unlimited-toggle { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; } 
+    .toggle-label { font-size: 13px; font-weight: 500; flex: 1; } 
+    .toggle-sub { font-size: 12px; color: var(--muted); } 
+    .toggle-switch { position: relative; width: 44px; height: 24px; cursor: pointer; } 
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; } 
+    .toggle-track { position: absolute; inset: 0; background: var(--border); border-radius: 12px; transition: background 0.2s; } 
+    .toggle-switch input:checked + .toggle-track { background: var(--accent); } 
+    .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform 0.2s; } 
+    .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(20px); } 
+ 
+    .delete-zone { margin-top: 24px; padding: 16px; border: 1px solid rgba(231,76,60,0.3); border-radius: 8px; background: rgba(231,76,60,0.05); } 
+    .delete-zone h4 { font-size: 13px; color: var(--red); margin-bottom: 8px; } 
+    .delete-zone p { font-size: 12px; color: var(--muted); margin-bottom: 12px; } 
+    .btn-delete { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 6px; padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; } 
+    .btn-delete:hover { background: var(--red); color: #fff; } 
+ 
+    .loading { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; } 
+ 
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; font-size: 13px; z-index: 9999; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; pointer-events: none; max-width: 300px; } 
+    .toast.show { opacity: 1; transform: translateY(0); } 
+    .toast.green { border-color: rgba(39,174,96,0.5); color: var(--green); } 
+    .toast.red { border-color: rgba(231,76,60,0.5); color: var(--red); } 
+ 
+    .review-stars-admin { color: #e4a0b0; font-size: 14px; letter-spacing: 1px; } 
+    .review-comment-cell { max-width: 360px; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } 
+    .badge-rating { background: rgba(228,160,176,0.15); color: #e4a0b0; border: 1px solid rgba(228,160,176,0.3); } 
+ 
+    .mode-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 0; } 
+    @media (max-width: 860px) { .mode-stats-grid { grid-template-columns: 1fr; } } 
+    .mode-stats-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; } 
+    .mode-stats-panel h3 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; } 
+    .mode-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; } 
+    .mode-row:last-child { margin-bottom: 0; } 
+    .mode-rank { font-size: 11px; color: var(--muted); width: 16px; text-align: center; flex-shrink: 0; } 
+    .mode-label { font-size: 13px; font-weight: 500; width: 110px; flex-shrink: 0; } 
+    .mode-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; } 
+    .mode-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), #c39bd3); transition: width 0.6s ease; } 
+    .mode-count { font-size: 12px; color: var(--muted); width: 44px; text-align: right; flex-shrink: 0; } 
+    .mode-pct { font-size: 12px; color: var(--accent); width: 34px; text-align: right; flex-shrink: 0; } 
+    .top-users-email { font-size: 12px; color: var(--muted); } 
+ 
+    @media (max-width: 600px) { 
+      .content { padding: 16px; } 
+      .topbar { padding: 0 16px; } 
+      th:nth-child(3), td:nth-child(3) { display: none; } 
+      .search-input { width: 100%; } 
+    } 
+  </style> 
+</head> 
+<body> 
+ 
+<!-- Login --> 
+<div id="login-screen">
+  <div class="login-card">
+    <h1>🔮 Super Admin</h1>
+    <p>Madame Fafi — Panneau d'administration</p>
+    <label for="admin-password">Mot de passe</label>
+    <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">Connexion</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+ 
+<!-- Dashboard --> 
+<div id="dashboard"> 
+  <div class="topbar"> 
+    <div class="topbar-brand">🔮 <span>Madame Fafi</span> — Admin</div> 
+    <button class="btn-logout" onclick="logout()">Déconnexion</button> 
+  </div> 
+ 
+  <div class="content"> 
+    <!-- Stats --> 
+    <div class="stats-grid" id="stats-grid"> 
+      <div class="stat-card"><div class="stat-label">Utilisateurs</div><div class="stat-value purple" id="stat-users">—</div></div> 
+      <div class="stat-card"><div class="stat-label">Tirages total</div><div class="stat-value" id="stat-readings">—</div></div> 
+      <div class="stat-card"><div class="stat-label">Crédits en cours</div><div class="stat-value" id="stat-credits">—</div></div> 
+      <div class="stat-card"><div class="stat-label">Revenus (complétés)</div><div class="stat-value green" id="stat-revenue">—</div></div> 
+      <div class="stat-card"><div class="stat-label">Achats Stripe</div><div class="stat-value" id="stat-purchases">—</div></div> 
+    </div> 
+ 
+    <!-- Paying Users --> 
+    <div style="margin-bottom: 36px;" id="payments-section"> 
+      <div class="section-header"> 
+        <div class="section-title">💰 Utilisateurs payants</div> 
+        <button class="action-btn success" onclick="loadPayments()">↺ Actualiser</button> 
+      </div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr> 
+              <th>Date</th><th>Utilisateur</th><th>Email</th><th>Pack acheté</th><th>Montant (EUR)</th><th>Crédits</th> 
+            </tr> 
+          </thead> 
+          <tbody id="payments-tbody"> 
+            <tr><td colspan="6" class="loading">Chargement…</td></tr> 
+          </tbody> 
+        </table> 
+      </div> 
+      <div id="payments-totals" style="display:flex;gap:16px;margin-top:12px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;flex-wrap:wrap;"></div> 
+    </div> 
+ 
+    <!-- Users --> 
+    <div class="section-header"> 
+      <div class="section-title">Utilisateurs</div> 
+      <input class="search-input" type="text" id="search-input" placeholder="Rechercher par nom ou email…" oninput="debounceSearch(this.value)"> 
+    </div> 
+    <div class="table-wrap"> 
+      <table> 
+        <thead> 
+          <tr> 
+            <th>Utilisateur</th><th>Email</th><th>Crédits</th><th>Inscription</th><th>Flags</th><th>Crédit du jour</th><th>Dé dimanche</th><th>Actions</th> 
+          </tr> 
+        </thead> 
+        <tbody id="users-tbody"> 
+          <tr><td colspan="8" class="loading">Chargement…</td></tr> 
+        </tbody> 
+      </table> 
+    </div> 
+
+    <!-- Reviews --> 
+    <div style="margin-top: 40px;"> 
+      <div class="section-header"> 
+        <div class="section-title">✨ Gestion des Avis</div> 
+        <button class="action-btn" onclick="loadReviews()">↺ Actualiser</button> 
+      </div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr><th>Pseudo</th><th>Note</th><th>Commentaire</th><th>Date</th><th>Action</th></tr> 
+          </thead> 
+          <tbody id="reviews-tbody"> 
+            <tr><td colspan="5" class="loading">Chargement…</td></tr> 
+          </tbody> 
+        </table> 
+      </div> 
+    </div> 
+ 
+    <!-- Mode Stats --> 
+    <div style="margin-top: 40px;"> 
+      <div class="section-header"> 
+        <div class="section-title">📊 Statistiques des modes</div> 
+        <button class="action-btn" onclick="loadModeStats()">↺ Actualiser</button> 
+      </div> 
+      <div class="mode-stats-grid"> 
+        <div class="mode-stats-panel"> 
+          <h3>Répartition des tirages</h3> 
+          <div id="mode-bars"><div class="loading">Chargement…</div></div> 
+        </div> 
+        <div class="mode-stats-panel"> 
+          <h3>Classement par mode</h3> 
+          <div class="table-wrap" style="border:none; background:transparent;"> 
+            <table> 
+              <thead><tr><th>#</th><th>Mode</th><th>Tirages</th><th>Part</th></tr></thead> 
+              <tbody id="mode-tbody"><tr><td colspan="4" class="loading">Chargement…</td></tr></tbody> 
+            </table> 
+          </div> 
+        </div> 
+      </div> 
+    </div> 
+ 
+    <!-- Top Users --> 
+    <div style="margin-top: 32px; margin-bottom: 40px;"> 
+      <div class="section-header"> 
+        <div class="section-title">🏆 Top utilisateurs</div> 
+      </div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr><th>#</th><th>Pseudo</th><th>Email</th><th>Tirages</th><th>Mode préféré</th></tr> 
+          </thead> 
+          <tbody id="top-users-tbody"> 
+            <tr><td colspan="5" class="loading">Chargement…</td></tr> 
+          </tbody> 
+        </table> 
+      </div> 
+    </div> 
+        
+    <!-- Traffic Sources --> 
+    <div style="margin-top: 40px; margin-bottom: 40px;" id="traffic-section"> 
+      <div class="section-header"> 
+        <div class="section-title">📡 Sources de trafic</div> 
+        <button class="action-btn" onclick="loadTrafficSources()">↺ Actualiser</button> 
+      </div> 
+      <div id="traffic-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr><th>Source</th><th>Inscriptions</th><th>Tirages</th><th>Achats</th><th>Revenu (€)</th><th>Première inscription</th></tr> 
+          </thead> 
+          <tbody id="traffic-tbody"><tr><td colspan="6" class="loading">Chargement…</td></tr></tbody> 
+        </table> 
+      </div> 
+      <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--muted);"> 
+        🔗 Lien TikTok optimisé pour la bio de Fatima : 
+        <code style="color:var(--accent);background:rgba(155,89,182,0.12);padding:2px 7px;border-radius:4px;font-size:11px;">https://madamefafi.com?utm_source=tiktok&amp;utm_medium=bio&amp;utm_campaign=launch</code> 
+      </div> 
+    </div> 
+ 
+    <!-- Promo Codes --> 
+    <div style="margin-top: 40px; margin-bottom: 40px;" id="promo-section"> 
+      <div class="section-header"> 
+        <div class="section-title">🎟 Codes Promo</div> 
+        <button class="action-btn success" onclick="loadPromoCodes()">↺ Actualiser</button> 
+      </div> 
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;"> 
+        <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;">Créer un code promo</div> 
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;"> 
+          <div> 
+            <label style="display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Nom du code</label> 
+            <input type="text" id="promo-code-name" placeholder="ex: TIKTOK50" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 13px;font-size:14px;outline:none;width:160px;text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()"> 
+          </div> 
+          <div> 
+            <label style="display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Crédits offerts</label> 
+            <input type="number" id="promo-credits" placeholder="ex: 10" min="1" max="10000" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 13px;font-size:14px;outline:none;width:120px;"> 
+          </div> 
+          <div> 
+            <label style="display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Limite d'utilisations</label> 
+            <input type="number" id="promo-max-uses" placeholder="ex: 100" min="1" style="background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:9px 13px;font-size:14px;outline:none;width:130px;"> 
+          </div> 
+          <div style="display:flex;align-items:center;gap:7px;padding-bottom:2px;"> 
+            <input type="checkbox" id="promo-unlimited" onchange="togglePromoUnlimited(this.checked)" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;"> 
+            <label for="promo-unlimited" style="font-size:13px;color:var(--text);cursor:pointer;">Illimité</label> 
+          </div> 
+          <button class="btn-primary" style="width:auto;padding:9px 20px;" onclick="createPromoCode()">+ Créer</button> 
+          <span id="promo-create-feedback" style="font-size:13px;"></span> 
+        </div> 
+      </div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr><th>Code</th><th>Crédits</th><th>Utilisations</th><th>Statut</th><th>Créé le</th><th>Actions</th></tr> 
+          </thead> 
+          <tbody id="promo-codes-tbody"><tr><td colspan="6" class="loading">Chargement…</td></tr></tbody> 
+        </table> 
+      </div> 
+    </div> 
+ 
+    <!-- Emails Envoyés --> 
+    <div style="margin-top: 40px; margin-bottom: 40px;" id="emails-sent-section"> 
+      <div class="section-header"> 
+        <div class="section-title">✉ Emails Envoyés</div> 
+        <div style="display:flex;gap:8px;align-items:center;"> 
+          <button class="action-btn success" onclick="loadEmailHistory(0)">↺ Actualiser</button> 
+        </div> 
+      </div> 
+      <div class="table-wrap"> 
+        <table> 
+          <thead> 
+            <tr><th>Date</th><th>Destinataire</th><th>Sujet</th><th>Message</th><th>Statut</th></tr> 
+          </thead> 
+          <tbody id="emails-sent-tbody"><tr><td colspan="5" class="loading">Chargement…</td></tr></tbody> 
+        </table> 
+      </div> 
+      <div id="emails-sent-pagination" style="display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px;font-size:13px;color:var(--muted);"> 
+        <span id="emails-sent-info"></span> 
+        <button id="emails-sent-prev" class="action-btn" onclick="emailHistoryPage(-1)" style="display:none;">← Préc.</button> 
+        <button id="emails-sent-next" class="action-btn" onclick="emailHistoryPage(1)" style="display:none;">Suiv. →</button> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<!-- Promo Uses Modal --> 
+<div class="modal-overlay hidden" id="promo-uses-modal"> 
+  <div class="modal"> 
+    <div class="modal-header"> 
+      <h2 id="promo-uses-title">Historique d'utilisation</h2> 
+      <button class="modal-close" onclick="closePromoUsesModal()">✕</button> 
+    </div> 
+    <div class="modal-body"> 
+      <div class="history-list" id="promo-uses-list"><div class="loading">Chargement…</div></div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<!-- Email Message Preview Modal --> 
+<div class="modal-overlay hidden" id="email-msg-modal"> 
+  <div class="modal" style="max-width:500px;"> 
+    <div class="modal-header"> 
+      <h2 id="email-msg-title">✉ Message</h2> 
+      <button class="modal-close" onclick="closeEmailMsgModal()">✕</button> 
+    </div> 
+    <div class="modal-body"> 
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;" id="email-msg-recipient"></div> 
+      <div id="email-msg-body" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;color:var(--text);max-height:400px;overflow-y:auto;"></div> 
+      <div style="display:flex;justify-content:flex-end;margin-top:16px;"> 
+        <button onclick="closeEmailMsgModal()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 20px;font-size:14px;cursor:pointer;">Fermer</button> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<!-- Admin Email Modal --> 
+<div class="modal-overlay hidden" id="email-modal"> 
+  <div class="modal" style="max-width:520px;"> 
+    <div class="modal-header"> 
+      <h2>✉ Envoyer un email</h2> 
+      <button class="modal-close" onclick="closeEmailModal()">✕</button> 
+    </div> 
+    <div class="modal-body"> 
+      <div style="margin-bottom:20px;"> 
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Destinataire</label> 
+        <input id="email-modal-to" type="text" readonly style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:rgba(232,213,245,0.5);font-size:14px;cursor:default;"> 
+      </div> 
+      <div style="margin-bottom:20px;"> 
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Objet</label> 
+        <input id="email-modal-subject" type="text" placeholder="Ex : Vos crédits ont été ajoutés ✨" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;" oninput="clearEmailFeedback()"> 
+      </div> 
+      <div style="margin-bottom:20px;"> 
+        <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Message</label> 
+        <textarea id="email-modal-message" rows="6" placeholder="Écris ton message ici…" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;resize:vertical;font-family:inherit;" oninput="clearEmailFeedback()"></textarea> 
+        <div style="font-size:11px;color:rgba(232,121,249,0.6);margin-top:6px;">✨ L'email inclura automatiquement la salutation "Bonjour [prénom]," et la signature Madame Fafi.</div> 
+      </div> 
+      <div id="email-modal-feedback" style="margin-bottom:16px;font-size:13px;min-height:18px;"></div> 
+      <div style="display:flex;gap:10px;justify-content:flex-end;"> 
+        <button onclick="closeEmailModal()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;">Annuler</button> 
+        <button id="email-modal-send-btn" onclick="sendAdminEmail()" style="background:linear-gradient(135deg,#9333ea,#db2777);border:none;color:#fff;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.5px;">✉ Envoyer</button> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<!-- User Detail Modal --> 
+<div class="modal-overlay hidden" id="user-modal"> 
+  <div class="modal"> 
+    <div class="modal-header"> 
+      <h2 id="modal-title">Utilisateur</h2> 
+      <button class="modal-close" onclick="closeModal()">✕</button> 
+    </div> 
+    <div class="modal-body"> 
+      <div class="user-meta-row" id="modal-meta"></div> 
+      <div class="modal-tabs"> 
+        <button class="tab-btn active" onclick="switchTab('credits')">💰 Crédits</button> 
+        <button class="tab-btn" onclick="switchTab('readings')">🃏 Tirages</button> 
+        <button class="tab-btn" onclick="switchTab('purchases')">🛒 Achats</button> 
+        <button class="tab-btn" onclick="switchTab('danger')">⚠ Danger</button> 
+      </div> 
+      <div class="tab-content active" id="tab-credits"> 
+        <div class="unlimited-toggle"> 
+          <div> 
+            <div class="toggle-label">Crédits illimités</div> 
+            <div class="toggle-sub">Bypass la vérification de crédits pour ce compte</div> 
+          </div> 
+          <label class="toggle-switch"> 
+            <input type="checkbox" id="unlimited-toggle" onchange="toggleUnlimited(this.checked)"> 
+            <div class="toggle-track"></div> 
+            <div class="toggle-thumb"></div> 
+          </label> 
+        </div> 
+        <div class="credits-row"> 
+          <input class="credits-input" type="number" id="credits-amount" placeholder="Nombre de crédits" min="1" max="10000"> 
+          <button class="btn-add-credits" onclick="addCredits()">+ Ajouter les crédits</button> 
+          <span class="credits-feedback" id="credits-feedback"></span> 
+        </div> 
+      </div> 
+      <div class="tab-content" id="tab-readings"> 
+        <div class="history-list" id="readings-list"><div class="loading">Chargement…</div></div> 
+      </div> 
+      <div class="tab-content" id="tab-purchases"> 
+        <div class="history-list" id="purchases-list"><div class="loading">Chargement…</div></div> 
+      </div> 
+      <div class="tab-content" id="tab-danger"> 
+        <div class="delete-zone"> 
+          <h4>Zone dangereuse</h4> 
+          <p>Supprimer définitivement ce compte et toutes les données associées (tirages, achats). Cette action est irréversible.</p> 
+          <button class="btn-delete" onclick="confirmDelete()">🗑 Supprimer ce compte</button> 
+        </div> 
+      </div> 
+    </div> 
+  </div> 
+</div> 
+ 
+<div class="toast" id="toast"></div> 
+ 
+<script>
+const API = '';
+let adminToken = localStorage.getItem('admin_token') || '';
+let currentUserId = null;
+let currentUserData = null;
+let searchTimer = null;
+
+// ── Boot ──
+window.addEventListener('DOMContentLoaded', () => {
+    const passwordInput = document.getElementById('admin-password');
+    if (passwordInput) {
+        passwordInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    }
+    if (adminToken) showDashboard();
+});
+
+// ── Auth ──
+async function handleLogin() {
+    const passwordInput = document.getElementById('admin-password');
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('login-error');
+    if (!errEl) return;
+    errEl.textContent = '';
+    if (!passwordInput) { errEl.textContent = "Erreur : Champ mot de passe manquant."; return; }
+    const pw = passwordInput.value.trim();
+    if (!pw) { errEl.textContent = 'Mot de passe requis'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Connexion…';
+    try {
+        const res = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pw })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+            localStorage.setItem('admin_token', data.token);
+            adminToken = data.token;
+            showDashboard();
+        } else {
+            errEl.textContent = data.error || 'Mot de passe incorrect';
+            btn.disabled = false;
+            btn.textContent = 'Connexion';
+        }
+    } catch (err) {
+        errEl.textContent = 'Erreur de connexion au serveur';
+        btn.disabled = false;
+        btn.textContent = 'Connexion';
+    }
+}
+
+function logout() {
+    localStorage.removeItem('admin_token');
+    adminToken = '';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    const passwordInput = document.getElementById('admin-password');
+    if (passwordInput) passwordInput.value = '';
+}
+
+let autoRefreshInterval = null;
+
+function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadStats();
+    loadPayments();
+    loadUsers();
+    loadReviews();
+    loadModeStats();
+    loadTrafficSources();
+    loadPromoCodes();
+    loadEmailHistory(0);
+
+    // ─── Auto-refresh toutes les 30 secondes ───────────────────
+    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+    autoRefreshInterval = setInterval(() => {
+        loadStats();
+        loadPayments();
+        loadUsers(document.getElementById('search-input')?.value || '');
+    }, 30000);
+}
+
+// ── API helpers ──
+async function api(method, path, body) {
+    const opts = {
+        method,
+        headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(API + path, opts);
+    if (res.status === 401) { logout(); return null; }
+    return res;
+}
+
+// ── Stats ──
+async function loadStats() {
+    const res = await api('GET', '/api/admin/stats');
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) return;
+    document.getElementById('stat-users').textContent = data.total_users.toLocaleString();
+    document.getElementById('stat-readings').textContent = data.total_readings.toLocaleString();
+    document.getElementById('stat-credits').textContent = data.total_credits_outstanding.toLocaleString();
+    document.getElementById('stat-revenue').textContent = `${(data.total_revenue_cents / 100).toFixed(2)} €`;
+    document.getElementById('stat-purchases').textContent = data.total_purchases.toLocaleString();
+}
+
+// ── Payments ──
+async function loadPayments() {
+    const tbody = document.getElementById('payments-tbody');
+    const totalsEl = document.getElementById('payments-totals');
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Chargement…</td></tr>';
+    totalsEl.innerHTML = '';
+    const res = await api('GET', '/api/admin/payments');
+    if (!res) return;
+    const data = await res.json();
+    if (data.error || !data.payments) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Erreur de chargement</td></tr>';
+        return;
+    }
+    if (data.payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun paiement pour le moment</td></tr>';
+        return;
+    }
+    tbody.innerHTML = data.payments.map(p => `
+        <tr>
+            <td style="white-space:nowrap;">${fmtDate(p.date)}</td>
+            <td style="font-weight:600;">${esc(p.username)}</td>
+            <td style="color:var(--muted);">${esc(p.email)}</td>
+            <td><span class="badge">${esc(p.pack_name)}</span></td>
+            <td style="font-weight:bold;">${p.amount_eur} €</td>
+            <td style="color:var(--green);">+${p.credits}</td>
+        </tr>
+    `).join('');
+    const totalEur = (data.total_revenue_cents / 100).toFixed(2);
+    totalsEl.innerHTML = `
+        <div style="font-weight:500;color:var(--muted);">${data.total_count} paiement${data.total_count > 1 ? 's' : ''}</div>
+        <div style="font-size:16px;font-weight:bold;color:var(--green);margin-top:4px;">${totalEur} € de revenu total</div>
+    `;
+} // ← FIX 1 : accolade fermante de loadPayments() était manquante
+
+// ── Users ──
+async function loadUsers(search = '') {
+    const tbody = document.getElementById('users-tbody');
+    tbody.innerHTML = '<tr><td colspan="8" class="loading">Chargement…</td></tr>';
+    const url = '/api/admin/users' + (search ? `?search=${encodeURIComponent(search)}` : '');
+    const res = await api('GET', url);
+    if (!res) return;
+    const data = await res.json();
+    // FIX 2 : le check était copié de loadReviews (data.reviews) au lieu de data.users
+    if (data.error || !data.users) { tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Erreur de chargement</td></tr>'; return; }
+    if (data.users.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Aucun utilisateur trouvé</td></tr>'; return; }
+    tbody.innerHTML = data.users.map(u => {
+        const dailyUsed = isDailyCreditUsedToday(u.daily_credit_used_at);
+        const modeLabel = u.daily_credit_mode === 'oracle' ? 'Oracle' : u.daily_credit_mode === 'tarot' ? 'Tarot' : '';
+        const dailyBadge = dailyUsed
+            ? `<span class="badge" style="background:rgba(39,174,96,0.15);color:var(--green);border:1px solid rgba(39,174,96,0.3);">✅ ${modeLabel ? modeLabel + ' · ' : ''}${fmtTimeParis(u.daily_credit_used_at)}</span>`
+            : `<span class="badge" style="background:rgba(231,76,60,0.12);color:#e74c3c;border:1px solid rgba(231,76,60,0.25);">❌ Non utilisé</span>`;
+        const diceRolled = isDiceRolledThisWeek(u.dice_roll_used_at);
+        const diceBadge = diceRolled
+            ? `<span class="badge" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.3);">🎲 ${u.dice_roll_result || '?'} tirages · ${fmtTimeParis(u.dice_roll_used_at)}</span>`
+            : `<span class="badge" style="background:rgba(100,100,100,0.1);color:rgba(232,213,245,0.3);border:1px solid rgba(100,100,100,0.2);">— Pas encore</span>`;
+        return `
+        <tr>
+            <td class="username-cell">${esc(u.username || '—')}</td>
+            <td class="email-cell">${esc(u.email)}</td>
+            <td><span class="badge badge-credits">${u.is_unlimited ? '∞' : u.credits}</span></td>
+            <td>${fmtDate(u.created_at)}</td>
+            <td>${u.is_unlimited ? '<span class="badge badge-unlimited">∞ Illimité</span> ' : ''}${u.is_admin ? '<span class="badge badge-admin">Admin</span>' : ''}</td>
+            <td>${dailyBadge}</td>
+            <td>${diceBadge}</td>
+            <td>
+                <div class="actions-cell">
+                    <button class="action-btn success" onclick="openModal(${u.id})">Gérer</button>
+                    <button class="action-btn email-btn" onclick="openEmailModal(${u.id}, '${esc(u.email)}', '${esc(u.username)}')">✉ Email</button>
+                    <button class="action-btn danger" onclick="quickDelete(${u.id}, '${esc(u.email)}')">Suppr.</button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function debounceSearch(val) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadUsers(val), 350);
+}
+
+// ── Modal ──
+async function openModal(userId) {
+    currentUserId = userId;
+    currentUserData = null;
+    document.getElementById('user-modal').classList.remove('hidden');
+    document.getElementById('modal-title').textContent = 'Chargement…';
+    document.getElementById('modal-meta').innerHTML = '';
+    document.getElementById('credits-feedback').textContent = '';
+    document.getElementById('credits-amount').value = '';
+    switchTab('credits');
+    const res = await api('GET', `/api/admin/users/${userId}`);
+    if (!res) return;
+    const data = await res.json();
+    if (!data.user) { toast('Erreur de chargement', 'red'); return; }
+    currentUserData = data.user;
+    renderModalUser(data.user);
+}
+
+function renderModalUser(u) {
+    document.getElementById('modal-title').textContent = `${u.username || u.email}`;
+    document.getElementById('modal-meta').innerHTML = `
+        <div class="user-meta-item"><span>Email</span><span>${esc(u.email)}</span></div>
+        <div class="user-meta-item"><span>ID</span><span>#${u.id}</span></div>
+        <div class="user-meta-item"><span>Crédits</span><span>${u.is_unlimited ? '∞ Illimités' : u.credits}</span></div>
+        <div class="user-meta-item"><span>Inscription</span><span>${fmtDate(u.created_at)}</span></div>
+    `;
+    document.getElementById('unlimited-toggle').checked = !!u.is_unlimited;
+}
+
+function closeModal() {
+    document.getElementById('user-modal').classList.add('hidden');
+    currentUserId = null;
+    currentUserData = null;
+}
+
+document.getElementById('user-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('user-modal')) closeModal();
+});
+
+function switchTab(tab) {
+    ['credits','readings','purchases','danger'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+    });
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', ['credits','readings','purchases','danger'][i] === tab);
+    });
+    if (tab === 'readings') loadReadings();
+    if (tab === 'purchases') loadPurchases();
+}
+
+// ── Credits ──
+async function addCredits() {
+    if (!currentUserId) return;
+    const amount = parseInt(document.getElementById('credits-amount').value);
+    const feedback = document.getElementById('credits-feedback');
+    if (!amount || amount < 1) { feedback.textContent = 'Montant invalide'; feedback.style.color = 'var(--red)'; return; }
+    feedback.textContent = 'Envoi…'; feedback.style.color = 'var(--muted)';
+    const res = await api('POST', `/api/admin/users/${currentUserId}/credits`, { amount });
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { feedback.textContent = data.error; feedback.style.color = 'var(--red)'; return; }
+    feedback.textContent = `✓ Nouveau solde : ${data.user.credits} crédits`;
+    feedback.style.color = 'var(--green)';
+    document.getElementById('credits-amount').value = '';
+    if (currentUserData) { currentUserData.credits = data.user.credits; renderModalUser(currentUserData); }
+    loadUsers(document.getElementById('search-input').value);
+    loadStats();
+    toast(`+${amount} crédits ajoutés`, 'green');
+}
+
+async function toggleUnlimited(checked) {
+    if (!currentUserId) return;
+    const res = await api('POST', `/api/admin/users/${currentUserId}/unlimited`, { unlimited: checked });
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    if (currentUserData) { currentUserData.is_unlimited = data.user.is_unlimited; renderModalUser(currentUserData); }
+    loadUsers(document.getElementById('search-input').value);
+    toast(checked ? 'Crédits illimités activés' : 'Crédits illimités désactivés', 'green');
+}
+
+// ── Readings ──
+async function loadReadings() {
+    if (!currentUserId) return;
+    const el = document.getElementById('readings-list');
+    el.innerHTML = '<div class="loading">Chargement…</div>';
+    const res = await api('GET', `/api/admin/users/${currentUserId}/readings`);
+    if (!res) return;
+    const data = await res.json();
+    if (!data.readings || data.readings.length === 0) { el.innerHTML = '<div class="empty-state">Aucun tirage</div>'; return; }
+    const MODE_LABELS = { oracle: 'Oracle', tarot: 'Tarot', amour: 'Amour', travail: 'Travail' };
+    el.innerHTML = data.readings.map(r => {
+        const cards = Array.isArray(r.cards) ? r.cards.map(c => c.emoji || '').join(' ') : '';
+        return `<div class="history-item">
+            <div>
+                <div class="hi-title">${cards} ${esc(r.fortune ? r.fortune.substring(0, 80) + (r.fortune.length > 80 ? '…' : '') : '—')}</div>
+                <div class="hi-meta">${fmtDate(r.created_at)} · 1 crédit</div>
+            </div>
+            <div class="hi-badge"><span class="badge badge-unlimited">${MODE_LABELS[r.mode] || r.mode}</span></div>
+        </div>`;
+    }).join('');
+}
+
+// ── Purchases ──
+async function loadPurchases() {
+    if (!currentUserId) return;
+    const el = document.getElementById('purchases-list');
+    el.innerHTML = '<div class="loading">Chargement…</div>';
+    const res = await api('GET', `/api/admin/users/${currentUserId}/purchases`);
+    if (!res) return;
+    const data = await res.json();
+    if (!data.purchases || data.purchases.length === 0) { el.innerHTML = '<div class="empty-state">Aucun achat</div>'; return; }
+    const STATUS_COLOR = { completed: 'badge-unlimited', pending: 'badge-admin' };
+    const PACK_NAMES = { '5': '5 Tirages', '15': '15 Tirages', '30': '30 Tirages', '60': '60 Tirages' };
+    el.innerHTML = data.purchases.map(p => {
+        const eur = (p.amount_cents / 100).toFixed(2);
+        return `<div class="history-item">
+            <div>
+                <div class="hi-title">${PACK_NAMES[p.pack_id] || p.pack_id} — ${eur} €</div>
+                <div class="hi-meta">${fmtDate(p.created_at)} · +${p.credits} crédits</div>
+            </div>
+            <div class="hi-badge"><span class="badge ${STATUS_COLOR[p.status] || 'badge-credits'}">${p.status}</span></div>
+        </div>`;
+    }).join('');
+}
+
+// ── Delete ──
+async function confirmDelete() {
+    if (!currentUserId || !currentUserData) return;
+    if (!confirm(`Supprimer définitivement le compte "${currentUserData.email}" ?\n\nTous les tirages et achats seront supprimés. Cette action est irréversible.`)) return;
+    const res = await api('DELETE', `/api/admin/users/${currentUserId}`);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    toast(`Compte ${currentUserData.email} supprimé`, 'green');
+    closeModal();
+    loadUsers(document.getElementById('search-input').value);
+    loadStats();
+}
+
+async function quickDelete(userId, email) {
+    if (!confirm(`Supprimer définitivement "${email}" ?\n\nTous les tirages et achats seront supprimés.`)) return;
+    const res = await api('DELETE', `/api/admin/users/${userId}`);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    toast(`Compte supprimé`, 'green');
+    loadUsers(document.getElementById('search-input').value);
+    loadStats();
+}
+
+// ── Reviews ──
+async function loadReviews() {
+    const tbody = document.getElementById('reviews-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading">Chargement…</td></tr>';
+    const res = await api('GET', '/api/reviews');
+    if (!res) return;
+    const data = await res.json();
+    // FIX 3 : } manquant sur le premier if — tout le reste de la fonction était engloutie dedans
+    if (!data.reviews) { tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Erreur de chargement</td></tr>'; return; }
+    if (data.reviews.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun avis pour le moment</td></tr>'; return; }
+    tbody.innerHTML = data.reviews.map(r => {
+        const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+        return `<tr>
+            <td class="username-cell">@${esc(r.username)}</td>
+            <td><span class="badge badge-rating review-stars-admin">${stars}</span></td>
+            <td class="review-comment-cell" title="${esc(r.comment)}">${esc(r.comment)}</td>
+            <td>${fmtDate(r.created_at)}</td>
+            <td><button class="action-btn danger" onclick="deleteReview(${r.id}, '${esc(r.username)}')">Supprimer</button></td>
+        </tr>`;
+    }).join('');
+}
+
+async function deleteReview(reviewId, username) {
+    if (!confirm(`Supprimer l'avis de @${username} ?\n\nCet avis ne sera plus visible sur la landing page.`)) return;
+    const res = await api('DELETE', `/api/reviews/${reviewId}`);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    toast('Avis supprimé', 'green');
+    loadReviews();
+}
+
+// ── Mode Stats ──
+const MODE_LABELS_GLOBAL = {
+    'oracle': 'Oracle', 'tarot': 'Tarot', 'amour': 'Amour',
+    'travail': 'Travail', 'horoscope': 'Horoscope', 'question': 'Question'
+};
+
+async function loadModeStats() {
+    const barsEl = document.getElementById('mode-bars');
+    const modeTbody = document.getElementById('mode-tbody');
+    const topTbody = document.getElementById('top-users-tbody');
+    barsEl.innerHTML = '<div class="loading">Chargement…</div>';
+    modeTbody.innerHTML = '<tr><td colspan="4" class="loading">Chargement…</td></tr>';
+    topTbody.innerHTML = '<tr><td colspan="5" class="loading">Chargement…</td></tr>';
+    const res = await api('GET', '/api/admin/mode-stats');
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { barsEl.innerHTML = '<div class="empty-state">Erreur de chargement</div>'; return; }
+    const { modes, topUsers } = data;
+    if (!modes || modes.length === 0) {
+        barsEl.innerHTML = '<div class="empty-state">Aucun tirage pour le moment</div>';
+        modeTbody.innerHTML = '<tr><td colspan="4" class="empty-state">—</td></tr>';
+    } else {
+        const maxTotal = modes[0].total;
+        barsEl.innerHTML = modes.map(m => `
+            <div class="mode-row">
+                <div class="mode-rank">${m.rank}</div>
+                <div class="mode-label">${MODE_LABELS_GLOBAL[m.mode] || m.mode}</div>
+                <div class="mode-bar-wrap"><div class="mode-bar" style="width:${maxTotal > 0 ? Math.round((m.total / maxTotal) * 100) : 0}%"></div></div>
+                <div class="mode-count">${m.total.toLocaleString()}</div>
+                <div class="mode-pct">${m.pct}%</div>
+            </div>
+        `).join('');
+        modeTbody.innerHTML = modes.map(m => `
+            <tr>
+                <td><strong>#${m.rank}</strong></td>
+                <td>${MODE_LABELS_GLOBAL[m.mode] || m.mode}</td>
+                <td>${m.total.toLocaleString()}</td>
+                <td><span class="badge badge-credits">${m.pct}%</span></td>
+            </tr>
+        `).join('');
+    }
+    if (!topUsers || topUsers.length === 0) {
+        // FIX 4 : topBody (undefined) → topTbody
+        topTbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun utilisateur avec des tirages</td></tr>';
+    } else {
+        topTbody.innerHTML = topUsers.map((u, i) => `
+            <tr>
+                <td><strong>#${i + 1}</strong></td>
+                <td class="username-cell">${esc(u.username)}</td>
+                <td class="top-users-email">${esc(u.email)}</td>
+                <td><span class="badge badge-credits">${u.total_readings.toLocaleString()}</span></td>
+                <td>${MODE_LABELS_GLOBAL[u.favorite_mode] || esc(u.favorite_mode)}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+// ── Promo Codes ──
+function togglePromoUnlimited(checked) {
+    const maxInput = document.getElementById('promo-max-uses');
+    maxInput.disabled = checked;
+    if (checked) maxInput.value = '';
+}
+
+async function loadPromoCodes() {
+    const tbody = document.getElementById('promo-codes-tbody');
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Chargement…</td></tr>';
+    const res = await api('GET', '/api/admin/promo-codes');
+    if (!res) return;
+    const data = await res.json();
+    if (data.error || !data.promo_codes) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Erreur de chargement</td></tr>'; return; }
+    if (data.promo_codes.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun code promo pour le moment</td></tr>'; return; }
+    tbody.innerHTML = data.promo_codes.map(p => {
+        const usageLabel = p.max_uses === null ? `${p.uses_count} / ∞` : `${p.uses_count} / ${p.max_uses}`;
+        const isExhausted = p.max_uses !== null && p.uses_count >= p.max_uses;
+        const statusBadge = isExhausted
+            ? '<span class="badge" style="background:#555;color:#aaa;">Épuisé</span>'
+            : p.is_active
+                ? '<span class="badge badge-unlimited">Actif</span>'
+                : '<span class="badge badge-admin">Inactif</span>';
+        return `<tr>
+            <td><strong style="font-family:monospace;letter-spacing:1px;">${esc(p.code)}</strong></td>
+            <td><span class="badge badge-credits">${p.credits} crédit${p.credits > 1 ? 's' : ''}</span></td>
+            <td>${usageLabel}</td>
+            <td>${statusBadge}</td>
+            <td>${fmtDate(p.created_at)}</td>
+            <td>
+                <div class="actions-cell">
+                    <button class="action-btn" onclick="viewPromoUses(${p.id}, '${esc(p.code)}')">Historique</button>
+                    ${!isExhausted ? `<button class="action-btn ${p.is_active ? '' : 'success'}" onclick="togglePromoCode(${p.id}, ${!p.is_active})">${p.is_active ? 'Désactiver' : 'Activer'}</button>` : ''}
+                    <button class="action-btn danger" onclick="deletePromoCode(${p.id}, '${esc(p.code)}')">Suppr.</button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+async function createPromoCode() {
+    const code = document.getElementById('promo-code-name').value.trim().toUpperCase();
+    const credits = parseInt(document.getElementById('promo-credits').value);
+    const unlimited = document.getElementById('promo-unlimited').checked;
+    const maxUsesRaw = document.getElementById('promo-max-uses').value;
+    const feedback = document.getElementById('promo-create-feedback');
+    if (!code) { feedback.textContent = 'Nom requis'; feedback.style.color = 'var(--red)'; return; }
+    if (!credits || credits < 1) { feedback.textContent = 'Crédits invalides'; feedback.style.color = 'var(--red)'; return; }
+    if (!unlimited && (!maxUsesRaw || parseInt(maxUsesRaw) < 1)) { feedback.textContent = 'Limite ou cocher "Illimité"'; feedback.style.color = 'var(--red)'; return; }
+    feedback.textContent = 'Création…'; feedback.style.color = 'var(--muted)';
+    const body = { code, credits, unlimited };
+    if (!unlimited) body.max_uses = parseInt(maxUsesRaw);
+    const res = await api('POST', '/api/admin/promo-codes', body);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { feedback.textContent = data.error; feedback.style.color = 'var(--red)'; return; }
+    feedback.textContent = '✓ Code créé !'; feedback.style.color = 'var(--green)';
+    document.getElementById('promo-code-name').value = '';
+    document.getElementById('promo-credits').value = '';
+    document.getElementById('promo-max-uses').value = '';
+    document.getElementById('promo-unlimited').checked = false;
+    document.getElementById('promo-max-uses').disabled = false;
+    setTimeout(() => { feedback.textContent = ''; }, 3000);
+    loadPromoCodes();
+    toast(`Code ${data.promo_code.code} créé`, 'green');
+}
+
+async function togglePromoCode(id, newActive) {
+    const res = await api('PUT', `/api/admin/promo-codes/${id}`, { is_active: newActive });
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    toast(`Code ${data.promo_code.code} ${newActive ? 'activé' : 'désactivé'}`, 'green');
+    loadPromoCodes();
+}
+
+async function deletePromoCode(id, code) {
+    if (!confirm(`Supprimer le code "${code}" ?\n\nTous les historiques d'utilisation seront supprimés.`)) return;
+    const res = await api('DELETE', `/api/admin/promo-codes/${id}`);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { toast(data.error, 'red'); return; }
+    toast(`Code ${code} supprimé`, 'green');
+    loadPromoCodes();
+}
+
+async function viewPromoUses(id, code) {
+    document.getElementById('promo-uses-modal').classList.remove('hidden');
+    document.getElementById('promo-uses-title').textContent = `Historique — ${code}`;
+    const el = document.getElementById('promo-uses-list');
+    el.innerHTML = '<div class="loading">Chargement…</div>';
+    const res = await api('GET', `/api/admin/promo-codes/${id}/uses`);
+    if (!res) return;
+    const data = await res.json();
+    if (!data.uses || data.uses.length === 0) { el.innerHTML = '<div class="empty-state">Aucune utilisation pour le moment</div>'; return; }
+    el.innerHTML = data.uses.map(u => `
+        <div class="history-item">
+            <div>
+                <div class="hi-title">${esc(u.username || '—')} — ${esc(u.email)}</div>
+                <div class="hi-meta">${fmtDate(u.used_at)} · ID utilisateur #${u.user_id}</div>
+            </div>
+            <div class="hi-badge"><span class="badge badge-credits">+${u.credits} crédits</span></div>
+        </div>
+    `).join('');
+}
+
+function closePromoUsesModal() {
+    document.getElementById('promo-uses-modal').classList.add('hidden');
+}
+
+// ── Traffic Sources ──
+async function loadTrafficSources() {
+    const tbody = document.getElementById('traffic-tbody');
+    const summary = document.getElementById('traffic-summary');
+    tbody.innerHTML = '<tr><td colspan="6" class="loading">Chargement…</td></tr>';
+    summary.innerHTML = '';
+    const res = await api('GET', '/api/admin/traffic-sources');
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Erreur de chargement</td></tr>'; return; }
+    const { sources, totals } = data;
+    const cards = [
+        { label: 'Inscriptions', value: totals.signups, color: 'var(--accent)' },
+        { label: 'Tirages', value: totals.readings, color: 'var(--blue)' },
+        { label: 'Achats', value: totals.purchases, color: 'var(--yellow)' },
+        { label: 'Revenu', value: (totals.revenue_eur_cents / 100).toFixed(2) + ' €', color: 'var(--green)' }
+    ];
+    summary.innerHTML = cards.map(c => `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:130px;">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">${c.label}</div>
+            <div style="font-size:24px;font-weight:700;color:${c.color};">${c.value}</div>
+        </div>
+    `).join('');
+    if (!sources || sources.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune donnée – les nouvelles inscriptions seront trackées automatiquement.</td></tr>';
+        return;
+    }
+    // FIX bonus : sourceIcon définie une seule fois, hors du .map()
+    function sourceIcon(src) {
+        if (!src) return '';
+        const s = src.toLowerCase();
+        if (s.startsWith('tiktok')) return '🎵';
+        if (s.startsWith('instagram')) return '📸';
+        if (s.startsWith('facebook')) return '👥';
+        if (s.startsWith('twitter') || s.startsWith('x')) return '🐦';
+        if (s.startsWith('whatsapp')) return '💬';
+        if (s.startsWith('google')) return '🔍';
+        if (s === 'direct') return '→';
+        return '';
+    }
+    tbody.innerHTML = sources.map(s => {
+        const revenueEur = (s.revenue_eur_cents / 100).toFixed(2);
+        const isTikTok = s.source.toLowerCase().startsWith('tiktok');
+        const rowStyle = isTikTok ? 'background:rgba(155,89,182,0.08);' : '';
+        // FIX 5 : sourceIcon et source n'étaient affichés en double dans le <td>
+        return `<tr style="${rowStyle}">
+            <td>
+                <span style="margin-right:6px;">${sourceIcon(s.source)}</span>
+                <strong style="${isTikTok ? 'color:var(--accent);' : ''}">${esc(s.source)}</strong>
+                ${isTikTok ? '<span style="font-size:10px;background:rgba(155,89,182,0.2);color:var(--accent);border-radius:4px;padding:1px 5px;margin-left:4px;">TikTok</span>' : ''}
+            </td>
+            <td><strong>${s.signups}</strong></td>
+            <td>${s.readings}</td>
+            <td>${s.purchases}</td>
+            <td>${s.revenue_eur_cents > 0 ? revenueEur + ' €' : '—'}</td>
+            <td>${fmtDate(s.first_signup)}</td>
+        </tr>`;
+    }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const promoModal = document.getElementById('promo-uses-modal');
+    if (promoModal) promoModal.addEventListener('click', e => {
+        if (e.target === promoModal) closePromoUsesModal();
+    });
+});
+
+// ── Utils ──
+function esc(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function isDailyCreditUsedToday(ts) {
+    if (!ts) return false;
+    const opts = { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(ts).toLocaleDateString('fr-FR', opts) === new Date().toLocaleDateString('fr-FR', opts);
+}
+
+function fmtTimeParis(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' });
+}
+
+function isDiceRolledThisWeek(ts) {
+    if (!ts) return false;
+    const msPerDay = 86400000;
+    const toParisDateStr = (d) => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(d);
+    const nowParisDate = new Date(toParisDateStr(new Date()) + 'T00:00:00Z');
+    const rollParisDate = new Date(toParisDateStr(new Date(ts)) + 'T00:00:00Z');
+    const weekStartMs = nowParisDate.getTime() - nowParisDate.getUTCDay() * msPerDay;
+    return rollParisDate.getTime() >= weekStartMs;
+}
+
+let toastTimer = null;
+function toast(msg, type = 'green') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.classList.remove('show'); }, 3000);
+}
+
+// ── Admin Email Modal ──
+let emailModalUserId = null;
+
+function openEmailModal(userId, email, username) {
+    emailModalUserId = userId;
+    document.getElementById('email-modal-to').value = `${email} (${username})`;
+    document.getElementById('email-modal-subject').value = '';
+    document.getElementById('email-modal-message').value = '';
+    clearEmailFeedback();
+    document.getElementById('email-modal').classList.remove('hidden');
+}
+
+function closeEmailModal() {
+    document.getElementById('email-modal').classList.add('hidden');
+    emailModalUserId = null;
+}
+
+function clearEmailFeedback() {
+    const fb = document.getElementById('email-modal-feedback');
+    if (fb) { fb.textContent = ''; fb.style.color = ''; }
+}
+
+async function sendAdminEmail() {
+    if (!emailModalUserId) return;
+    const subject = document.getElementById('email-modal-subject').value.trim();
+    const message = document.getElementById('email-modal-message').value.trim();
+    const fb = document.getElementById('email-modal-feedback');
+    const btn = document.getElementById('email-modal-send-btn');
+    if (!subject) { fb.textContent = 'Objet requis.'; fb.style.color = 'var(--red)'; return; }
+    if (!message) { fb.textContent = 'Message requis.'; fb.style.color = 'var(--red)'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Envoi…';
+    fb.textContent = '';
+    try {
+        const resp = await api('POST', '/api/admin/send-email', { userId: emailModalUserId, subject, message });
+        if (!resp) { btn.disabled = false; btn.textContent = '✉ Envoyer'; return; }
+        const data = await resp.json();
+        if (!resp.ok) {
+            fb.textContent = data.error || 'Erreur lors de l\'envoi.';
+            fb.style.color = 'var(--red)';
+            btn.disabled = false;
+            btn.textContent = '✉ Envoyer';
+            return;
+        }
+        closeEmailModal();
+        toast(`✉ Email envoyé à ${data.to}`, 'green');
+        loadEmailHistory(0);
+    } catch (err) {
+        fb.textContent = 'Erreur réseau.';
+        fb.style.color = 'var(--red)';
+        btn.disabled = false;
+        btn.textContent = '✉ Envoyer';
+    }
+}
+
+document.getElementById('email-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmailModal();
+});
+
+// ── Email History ──
+let emailHistoryOffset = 0;
+const EMAIL_HISTORY_LIMIT = 30;
+
+async function loadEmailHistory(offset = 0) {
+    emailHistoryOffset = offset;
+    const tbody = document.getElementById('emails-sent-tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="loading">Chargement…</td></tr>';
+    const res = await api('GET', `/api/admin/emails?limit=${EMAIL_HISTORY_LIMIT}&offset=${offset}`);
+    if (!res) return;
+    const data = await res.json();
+    if (data.error) { tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Erreur de chargement</td></tr>'; return; }
+    if (!data.emails || data.emails.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun email envoyé pour le moment</td></tr>';
+        document.getElementById('emails-sent-info').textContent = '';
+        document.getElementById('emails-sent-prev').style.display = 'none';
+        document.getElementById('emails-sent-next').style.display = 'none';
+        return;
+    }
+    tbody.innerHTML = data.emails.map(e => {
+        const statusBadge = e.status === 'success'
+            ? '<span class="badge badge-unlimited">✅ Envoyé</span>'
+            : '<span class="badge badge-admin" style="background:#e74c3c22;color:var(--red);border-color:var(--red);">❌ Échoué</span>';
+        const preview = esc(e.message.length > 80 ? e.message.substring(0, 80) + '…' : e.message);
+        const msgEncoded = encodeURIComponent(e.message);
+        return `<tr>
+            <td style="white-space:nowrap;">${fmtDate(e.sent_at)}</td>
+            <td>
+                <div style="font-weight:600;">${esc(e.recipient_username)}</div>
+                <div style="color:var(--muted);font-size:12px;">${esc(e.recipient_email)}</div>
+            </td>
+            <td style="font-weight:500;">${esc(e.subject)}</td>
+            <td>
+                <span style="color:var(--muted);font-size:13px;">${preview}</span>
+                <button class="action-btn" style="margin-left:8px;padding:3px 8px;font-size:11px;" onclick="viewEmailMessage('${esc(e.subject)}','${esc(e.recipient_username)}',decodeURIComponent('${msgEncoded}'))">Voir</button>
+            </td>
+            <td>${statusBadge}</td>
+        </tr>`;
+    }).join('');
+    const from = offset + 1;
+    const to = Math.min(offset + data.emails.length, data.total);
+    document.getElementById('emails-sent-info').textContent = `${from}–${to} sur ${data.total}`;
+    document.getElementById('emails-sent-prev').style.display = offset > 0 ? 'inline-flex' : 'none';
+    document.getElementById('emails-sent-next').style.display = (offset + EMAIL_HISTORY_LIMIT) < data.total ? 'inline-flex' : 'none';
+}
+
+function emailHistoryPage(dir) {
+    const newOffset = emailHistoryOffset + dir * EMAIL_HISTORY_LIMIT;
+    if (newOffset < 0) return;
+    loadEmailHistory(newOffset);
+}
+
+function viewEmailMessage(subject, username, message) {
+    document.getElementById('email-msg-title').textContent = subject;
+    document.getElementById('email-msg-recipient').textContent = `À: ${username}`;
+    document.getElementById('email-msg-body').textContent = message;
+    document.getElementById('email-msg-modal').classList.remove('hidden');
+}
+
+function closeEmailMsgModal() {
+    document.getElementById('email-msg-modal').classList.add('hidden');
+}
+
+document.getElementById('email-msg-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmailMsgModal();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique de Confidentialité — Madame Fafi</title>
+    <meta name="description" content="Politique de confidentialité de Madame Fafi. Protection de vos données personnelles, Loi 09-08, cookies.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --rose-100: #fce7f3;
+            --rose-300: #f9a8d4;
+            --rose-400: #f472b6;
+            --rose-500: #ec4899;
+            --violet-400: #a78bfa;
+            --violet-500: #8b5cf6;
+            --violet-600: #7c3aed;
+            --violet-700: #6d28d9;
+            --violet-800: #5b21b6;
+            --violet-900: #4c1d95;
+            --violet-950: #2e1065;
+            --dark: #0f0518;
+            --dark-surface: #1a0a2e;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--dark);
+            color: #e8d5f5;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .stars::before, .stars::after {
+            content: '';
+            position: absolute;
+            width: 2px; height: 2px;
+            border-radius: 50%;
+            background: white;
+            box-shadow:
+                25px 80px 0 0 rgba(255,255,255,0.3),
+                100px 200px 0 0 rgba(255,255,255,0.2),
+                200px 50px 0 0 rgba(255,255,255,0.4),
+                350px 150px 0 0 rgba(255,255,255,0.15),
+                500px 90px 0 0 rgba(255,255,255,0.3),
+                620px 280px 0 0 rgba(255,255,255,0.2),
+                750px 40px 0 0 rgba(255,255,255,0.35),
+                150px 350px 0 0 rgba(255,255,255,0.25),
+                400px 300px 0 0 rgba(255,255,255,0.2),
+                550px 200px 0 0 rgba(255,255,255,0.3),
+                680px 120px 0 0 rgba(255,255,255,0.15),
+                820px 250px 0 0 rgba(255,255,255,0.4),
+                900px 100px 0 0 rgba(255,255,255,0.2),
+                1050px 300px 0 0 rgba(255,255,255,0.25),
+                1200px 180px 0 0 rgba(255,255,255,0.3),
+                80px 500px 0 0 rgba(255,255,255,0.2),
+                300px 450px 0 0 rgba(255,255,255,0.35),
+                700px 380px 0 0 rgba(255,255,255,0.15),
+                950px 420px 0 0 rgba(255,255,255,0.3),
+                1100px 500px 0 0 rgba(255,255,255,0.2);
+            animation: twinkle 4s ease-in-out infinite alternate;
+        }
+        .stars::after {
+            animation-delay: 2s;
+            box-shadow:
+                60px 130px 0 0 rgba(255,255,255,0.2),
+                180px 280px 0 0 rgba(255,255,255,0.35),
+                320px 100px 0 0 rgba(255,255,255,0.15),
+                470px 220px 0 0 rgba(255,255,255,0.3),
+                600px 50px 0 0 rgba(255,255,255,0.25),
+                730px 330px 0 0 rgba(255,255,255,0.2),
+                870px 170px 0 0 rgba(255,255,255,0.4),
+                1000px 260px 0 0 rgba(255,255,255,0.15),
+                120px 420px 0 0 rgba(255,255,255,0.3),
+                450px 380px 0 0 rgba(255,255,255,0.2);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(232,213,245,0.5);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--violet-400); }
+
+        .page-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--rose-300), var(--violet-400));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: rgba(232,213,245,0.35);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        h2 {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 700;
+            color: #f3e8ff;
+            margin-top: 2.5rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(139,92,246,0.2);
+        }
+
+        h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--violet-400);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 0.92rem;
+            color: rgba(232,213,245,0.75);
+            font-weight: 300;
+            margin-bottom: 0.8rem;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        li {
+            font-size: 0.92rem;
+            color: rgba(232,213,245,0.75);
+            font-weight: 300;
+            margin-bottom: 0.4rem;
+        }
+
+        strong { color: #f3e8ff; font-weight: 600; }
+
+        .highlight-box {
+            background: rgba(139,92,246,0.06);
+            border: 1px solid rgba(139,92,246,0.18);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+
+        .separator {
+            border: none;
+            border-top: 1px solid rgba(139,92,246,0.08);
+            margin: 2.5rem 0;
+        }
+
+        .toc {
+            background: rgba(139,92,246,0.04);
+            border: 1px solid rgba(139,92,246,0.1);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .toc-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--violet-400);
+            margin-bottom: 0.8rem;
+        }
+        .toc ol {
+            padding-left: 1.4rem;
+            margin: 0;
+        }
+        .toc li {
+            margin-bottom: 0.35rem;
+        }
+        .toc a {
+            color: rgba(232,213,245,0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+        .toc a:hover { color: var(--violet-400); }
+
+        .rights-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+        }
+        .rights-table th,
+        .rights-table td {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: 400;
+            border-bottom: 1px solid rgba(139,92,246,0.12);
+        }
+        .rights-table th {
+            color: var(--violet-400);
+            font-weight: 600;
+            background: rgba(139,92,246,0.05);
+        }
+        .rights-table td {
+            color: rgba(232,213,245,0.75);
+        }
+        .rights-table tr:last-child td { border-bottom: none; }
+
+        /* Footer */
+        footer {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(139,92,246,0.08);
+            position: relative;
+            z-index: 1;
+        }
+        .footer-brand {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            color: rgba(232,213,245,0.4);
+            margin-bottom: 0.5rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+        }
+        .footer-links a {
+            font-size: 0.82rem;
+            color: rgba(232,213,245,0.35);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--violet-400); }
+        .footer-tiktok {
+            font-size: 0.8rem;
+            color: rgba(232,213,245,0.25);
+        }
+        .footer-tiktok a {
+            color: var(--rose-400);
+            text-decoration: none;
+        }
+        .footer-tiktok a:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .page-wrap { padding: 2rem 1.2rem 4rem; }
+            .rights-table th, .rights-table td { padding: 0.6rem 0.75rem; font-size: 0.84rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <div class="page-wrap">
+        <a href="/" class="back-link">&#x2190; Retour au site</a>
+
+        <h1 class="page-title">Politique de Confidentialité</h1>
+        <p class="page-subtitle">Dernière mise à jour : 27 avril 2026 — Conformément à la Loi 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel (CNDP, Maroc)</p>
+
+        <!-- Table of contents -->
+        <nav class="toc">
+            <p class="toc-title">&#x1F512; Sommaire</p>
+            <ol>
+                <li><a href="#responsable">Responsable du traitement</a></li>
+                <li><a href="#donnees">Données collectées</a></li>
+                <li><a href="#finalites">Finalités du traitement</a></li>
+                <li><a href="#base-legale">Base légale</a></li>
+                <li><a href="#duree">Durée de conservation</a></li>
+                <li><a href="#partage">Partage des données</a></li>
+                <li><a href="#cookies">Cookies</a></li>
+                <li><a href="#droits">Vos droits</a></li>
+                <li><a href="#securite">Sécurité des données</a></li>
+                <li><a href="#hebergement">Hébergement</a></li>
+                <li><a href="#modifications">Modifications</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="responsable">1. Responsable du traitement</h2>
+        <p>Le responsable du traitement des données personnelles collectées sur <strong>madamefafi.com</strong> est :</p>
+        <p><strong>Madame Fafi</strong><br>
+        Société de droit marocain<br>
+        <strong>Email :</strong> contact@madamefafi.com</p>
+
+        <hr class="separator">
+
+        <h2 id="donnees">2. Données collectées</h2>
+        <p>Madame Fafi collecte uniquement les données nécessaires à la fourniture du service. Voici les données collectées :</p>
+
+        <h3>Données d'inscription</h3>
+        <ul>
+            <li><strong>Nom d'utilisateur (username)</strong> — choisi par l'utilisateur lors de l'inscription, visible publiquement sur les avis</li>
+            <li><strong>Adresse email</strong> — pour la création du compte, la connexion et l'envoi de reçus</li>
+            <li><strong>Mot de passe</strong> — hashé (bcrypt) avant stockage, jamais stocké en clair</li>
+        </ul>
+
+        <h3>Données d'utilisation</h3>
+        <ul>
+            <li><strong>Historique des tirages</strong> — conserve les tirages réalisés et les prédictions générées pour affichage dans l'historique utilisateur</li>
+            <li><strong>Crédits restants</strong> — données de consommation du service</li>
+            <li><strong>Avis utilisateur</strong> — commentaires et notes laissés par les utilisateurs (visibles publiquement avec username)</li>
+        </ul>
+
+        <h3>Données de paiement</h3>
+        <ul>
+            <li>Les données de paiement (numéro de carte, etc.) sont traitées directement par <strong>Stripe</strong>. Madame Fafi ne stocke pas les données bancaires sur ses serveurs.</li>
+            <li>Seul l'identifiant de transaction Stripe est conservé pour la gestion des achats et la comptabilité.</li>
+        </ul>
+
+        <hr class="separator">
+
+        <h2 id="finalites">3. Finalités du traitement</h2>
+        <p>Vos données personnelles sont traitées pour les finalités suivantes :</p>
+        <ul>
+            <li><strong>Création et gestion du compte utilisateur</strong> — inscription, connexion, gestion du profil</li>
+            <li><strong>Fourniture du service de tirage</strong> — accès à l'historique des tirages, suivi des crédits</li>
+            <li><strong>Génération des prédictions</strong> — les prédictions sont générées via l'API OpenAI et sont personnelles à chaque utilisateur</li>
+            <li><strong>Traitement des paiements</strong> — via Stripe, pour l'achat de crédits</li>
+            <li><strong>Envoi de reçus et communications liées au service</strong></li>
+            <li><strong>Affichage des avis</strong> — les avis sont affichés publiquement sur le site avec le nom d'utilisateur</li>
+        </ul>
+
+        <hr class="separator">
+
+        <h2 id="base-legale">4. Base légale</h2>
+        <p>Le traitement de vos données repose sur les bases légales suivantes, conformément à la <strong>Loi 09-08</strong> relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel :</p>
+        <ul>
+            <li><strong>Exécution du contrat (art. 6.1.b)</strong> — le traitement nécessaire à la fourniture du service demandé (création de compte, tirage, historique, paiement)</li>
+            <li><strong>Consentement (art. 6.1.a)</strong> — pour les fonctionnalités nécessitant un consentement explicite (ex. : communications marketing, le cas échéant)</li>
+            <li><strong>Intérêt légitime (art. 6.1.f)</strong> — pour la sécurité du service et la détection de fraudes</li>
+        </ul>
+
+        <hr class="separator">
+
+        <h2 id="duree">5. Durée de conservation</h2>
+        <p>Vos données sont conservées aussi longtemps que votre compte est actif :</p>
+        <ul>
+            <li><strong>Données de compte</strong> (username, email, password hash) : conservées jusqu'à suppression du compte par l'utilisateur ou demande de suppression</li>
+            <li><strong>Historique des tirages</strong> : conservé pendant 3 ans après la dernière activité, puis supprimé ou anonymisé</li>
+            <li><strong>Données de paiement</strong> (identifiants Stripe) : conservées 5 ans conformément aux obligations comptables marocaines</li>
+            <li><strong>Avis utilisateur</strong> : supprimés sur demande de l'utilisateur ou lors de la suppression du compte</li>
+        </ul>
+
+        <div class="highlight-box">
+            <p><strong>&#x1F6AB; Après suppression du compte :</strong> les données sont supprimées dans un délai maximal de 30 jours, sauf obligations légales de conservation (données comptables : 5 ans).</p>
+        </div>
+
+        <hr class="separator">
+
+        <h2 id="partage">6. Partage des données</h2>
+        <p>Madame Fafi ne vend pas vos données personnelles. Aucune donnée n'est transmise à des tiers à des fins marketing ou publicitaires sans votre consentement explicite.</p>
+
+        <hr class="separator">
+
+        <h2 id="cookies">7. Cookies</h2>
+        <p>Le site Madame Fafi utilise des cookies pour le bon fonctionnement du service :</p>
+
+        <table class="rights-table">
+            <thead>
+                <tr>
+                    <th>Cookie</th>
+                    <th>Finalité</th>
+                    <th>Durée</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Session / Auth</td>
+                    <td>Authentification de l'utilisateur — maintien de la session de connexion</td>
+                    <td>Session (fermeture du navigateur) + 30 jours avec option "Se souvenir de moi"</td>
+                </tr>
+                <tr>
+                    <td>SW Cache</td>
+                    <td>Cache du Service Worker pour le bon fonctionnement du PWA</td>
+                    <td>Session</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Vous pouvez configurer votre navigateur pour refuser les cookies. Cependant, le refus de cookies d'authentification peut empêcher l'accès au service.</p>
+
+        <hr class="separator">
+
+        <h2 id="droits">8. Vos droits</h2>
+        <p>Conformément à la <strong>Loi 09-08</strong> relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel (Maroc), vous disposez des droits suivants concernant vos données personnelles :</p>
+
+        <table class="rights-table">
+            <thead>
+                <tr>
+                    <th>Droit</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Droit d'accès</strong></td>
+                    <td>Obtenir une copie de vos données personnelles en notre possession</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit de rectification</strong></td>
+                    <td>Faire corriger toute donnée inexacte ou incomplète</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit à l'effacement</strong></td>
+                    <td>Demander la suppression de vos données (droit à l'oubli), dans les limites des obligations légales</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit à la portabilité</strong></td>
+                    <td>Recevoir vos données dans un format structuré et couramment utilisé</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit d'opposition</strong></td>
+                    <td>Vous opposer au traitement de vos données à des fins spécifiques</td>
+                </tr>
+                <tr>
+                    <td><strong>Droit à la limitation</strong></td>
+                    <td>Demander la limitation du traitement de vos données dans certains cas</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Pour exercer vos droits, contactez-nous à l'adresse <strong>contact@madamefafi.com</strong> en indiquant clairement la nature de votre demande.</p>
+        <p>Vous avez également le droit d'introduire une réclamation auprès de la <strong>CNDP</strong> (Commission Nationale de contrôle de la protection des Données à caractère personnel) : <a href="https://www.cndp.ma" style="color: var(--violet-400);">https://www.cndp.ma</a></p>
+
+        <hr class="separator">
+
+        <h2 id="securite">9. Sécurité des données</h2>
+        <p>Madame Fafi met en œuvre des mesures de sécurité techniques et organisationnelles appropriées pour protéger vos données personnelles contre tout accès non autorisé, modification, divulgation ou destruction.</p>
+        <p>Ces mesures incluent notamment : le hashage des mots de passe (bcrypt), le chiffrement HTTPS (TLS), la gestion des accès via JWT, et le stockage sécurisé des identifiants Stripe.</p>
+
+        <hr class="separator">
+
+        <h2 id="hebergement">10. Hébergement</h2>
+        <p>Les données personnelles des utilisateurs de Madame Fafi sont hébergées sur des serveurs exploités par :</p>
+        <ul>
+            <li><strong>Neon Database Inc.</strong> (base de données PostgreSQL) — <a href="https://neon.tech" style="color: var(--violet-400);">neon.tech</a></li>
+            <li><strong>Render Technologies Inc.</strong> (application web) — <a href="https://render.com" style="color: var(--violet-400);">render.com</a></li>
+        </ul>
+        <p>Madame Fafi veille à ce que tout sous-traitant respecte un engagement contractuel de confidentialité et de sécurité conforme à la <strong>Loi 09-08</strong>.</p>
+
+        <hr class="separator">
+
+        <h2 id="modifications">11. Modifications de cette politique</h2>
+        <p>Madame Fafi peut modifier cette politique de confidentialité à tout moment. En cas de modification substantielle, les utilisateurs seront informés par email ou lors de leur prochaine connexion au service.</p>
+        <p>Les modifications entrent en vigueur dès leur publication sur cette page.</p>
+
+        <hr class="separator">
+
+        <h2 id="contact">12. Contact</h2>
+        <p>Pour toute question concernant cette politique de confidentialité, pour exercer vos droits, ou pour signaler un problème relatif à vos données personnelles :</p>
+        <p><strong>Email :</strong> <a href="mailto:contact@madamefafi.com" style="color: var(--violet-400);">contact@madamefafi.com</a></p>
+        <p>Nous répondons à toute demande dans un délai de 30 jours.</p>
+
+        <p style="margin-top: 2rem; color: rgba(232,213,245,0.35);">&#x1F52E; Madame Fafi &#x2728; — madamefafi.com</p>
+    </div>
+
+    <footer>
+        <p class="footer-brand">Madame Fafi &#x2728;</p>
+        <nav class="footer-links">
+            <a href="/cgv">CGV</a>
+            <a href="/politique-de-confidentialite">Politique de confidentialité</a>
+        </nav>
+        <p class="footer-tiktok">Retrouve-moi sur TikTok : <a href="https://www.tiktok.com/@madamefafi" target="_blank">@madamefafi</a></p>
+    </footer>
+</body>
+</html>

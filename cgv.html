@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditions Générales de Vente — Madame Fafi</title>
+    <meta name="description" content="Conditions Générales de Vente de Madame Fafi. Tirages de cartes en ligne, crédits, paiements Stripe.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --rose-100: #fce7f3;
+            --rose-300: #f9a8d4;
+            --rose-400: #f472b6;
+            --rose-500: #ec4899;
+            --violet-400: #a78bfa;
+            --violet-500: #8b5cf6;
+            --violet-600: #7c3aed;
+            --violet-700: #6d28d9;
+            --violet-800: #5b21b6;
+            --violet-900: #4c1d95;
+            --violet-950: #2e1065;
+            --dark: #0f0518;
+            --dark-surface: #1a0a2e;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--dark);
+            color: #e8d5f5;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .stars::before, .stars::after {
+            content: '';
+            position: absolute;
+            width: 2px; height: 2px;
+            border-radius: 50%;
+            background: white;
+            box-shadow:
+                25px 80px 0 0 rgba(255,255,255,0.3),
+                100px 200px 0 0 rgba(255,255,255,0.2),
+                200px 50px 0 0 rgba(255,255,255,0.4),
+                350px 150px 0 0 rgba(255,255,255,0.15),
+                500px 90px 0 0 rgba(255,255,255,0.3),
+                620px 280px 0 0 rgba(255,255,255,0.2),
+                750px 40px 0 0 rgba(255,255,255,0.35),
+                150px 350px 0 0 rgba(255,255,255,0.25),
+                400px 300px 0 0 rgba(255,255,255,0.2),
+                550px 200px 0 0 rgba(255,255,255,0.3),
+                680px 120px 0 0 rgba(255,255,255,0.15),
+                820px 250px 0 0 rgba(255,255,255,0.4),
+                900px 100px 0 0 rgba(255,255,255,0.2),
+                1050px 300px 0 0 rgba(255,255,255,0.25),
+                1200px 180px 0 0 rgba(255,255,255,0.3),
+                80px 500px 0 0 rgba(255,255,255,0.2),
+                300px 450px 0 0 rgba(255,255,255,0.35),
+                700px 380px 0 0 rgba(255,255,255,0.15),
+                950px 420px 0 0 rgba(255,255,255,0.3),
+                1100px 500px 0 0 rgba(255,255,255,0.2);
+            animation: twinkle 4s ease-in-out infinite alternate;
+        }
+        .stars::after {
+            animation-delay: 2s;
+            box-shadow:
+                60px 130px 0 0 rgba(255,255,255,0.2),
+                180px 280px 0 0 rgba(255,255,255,0.35),
+                320px 100px 0 0 rgba(255,255,255,0.15),
+                470px 220px 0 0 rgba(255,255,255,0.3),
+                600px 50px 0 0 rgba(255,255,255,0.25),
+                730px 330px 0 0 rgba(255,255,255,0.2),
+                870px 170px 0 0 rgba(255,255,255,0.4),
+                1000px 260px 0 0 rgba(255,255,255,0.15),
+                120px 420px 0 0 rgba(255,255,255,0.3),
+                450px 380px 0 0 rgba(255,255,255,0.2);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: rgba(232,213,245,0.5);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--violet-400); }
+
+        .page-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--rose-300), var(--violet-400));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 0.82rem;
+            color: rgba(232,213,245,0.35);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        h2 {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 700;
+            color: #f3e8ff;
+            margin-top: 2.5rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(139,92,246,0.2);
+        }
+
+        h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--violet-400);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 0.92rem;
+            color: rgba(232,213,245,0.75);
+            font-weight: 300;
+            margin-bottom: 0.8rem;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        li {
+            font-size: 0.92rem;
+            color: rgba(232,213,245,0.75);
+            font-weight: 300;
+            margin-bottom: 0.4rem;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+        }
+        .price-table th,
+        .price-table td {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-size: 0.88rem;
+            font-weight: 400;
+            border-bottom: 1px solid rgba(139,92,246,0.12);
+        }
+        .price-table th {
+            color: var(--violet-400);
+            font-weight: 600;
+            background: rgba(139,92,246,0.05);
+        }
+        .price-table td {
+            color: rgba(232,213,245,0.75);
+        }
+        .price-table tr:last-child td { border-bottom: none; }
+
+        strong { color: #f3e8ff; font-weight: 600; }
+
+        .highlight-box {
+            background: rgba(139,92,246,0.06);
+            border: 1px solid rgba(139,92,246,0.18);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+        .highlight-box p { margin-bottom: 0; }
+
+        .separator {
+            border: none;
+            border-top: 1px solid rgba(139,92,246,0.08);
+            margin: 2.5rem 0;
+        }
+
+        .toc {
+            background: rgba(139,92,246,0.04);
+            border: 1px solid rgba(139,92,246,0.1);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .toc-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--violet-400);
+            margin-bottom: 0.8rem;
+        }
+        .toc ol {
+            padding-left: 1.4rem;
+            margin: 0;
+        }
+        .toc li {
+            margin-bottom: 0.35rem;
+        }
+        .toc a {
+            color: rgba(232,213,245,0.7);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+        .toc a:hover { color: var(--violet-400); }
+
+        /* Footer */
+        footer {
+            padding: 3rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(139,92,246,0.08);
+            position: relative;
+            z-index: 1;
+        }
+        .footer-brand {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            color: rgba(232,213,245,0.4);
+            margin-bottom: 0.5rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+        }
+        .footer-links a {
+            font-size: 0.82rem;
+            color: rgba(232,213,245,0.35);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--violet-400); }
+        .footer-tiktok {
+            font-size: 0.8rem;
+            color: rgba(232,213,245,0.25);
+        }
+        .footer-tiktok a {
+            color: var(--rose-400);
+            text-decoration: none;
+        }
+        .footer-tiktok a:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .page-wrap { padding: 2rem 1.2rem 4rem; }
+            .price-table th, .price-table td { padding: 0.6rem 0.75rem; font-size: 0.84rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <div class="page-wrap">
+        <a href="/" class="back-link">&#x2190; Retour au site</a>
+
+        <h1 class="page-title">Conditions Générales de Vente</h1>
+        <p class="page-subtitle">Dernière mise à jour : 27 avril 2026</p>
+
+        <!-- Table of contents -->
+        <nav class="toc">
+            <p class="toc-title">&#x1F4DC; Sommaire</p>
+            <ol>
+                <li><a href="#editor">Informations sur l'éditeur</a></li>
+                <li><a href="#offres">Objet et offres</a></li>
+                <li><a href="#prix">Prix et paiement</a></li>
+                <li><a href="#credits">Crédits de tirage</a></li>
+                <li><a href="#gratuit">Tirages gratuits</a></li>
+                <li><a href="#retractation">Droit de rétractation</a></li>
+                <li><a href="#propriete">Propriété intellectuelle</a></li>
+                <li><a href="#responsabilite">Responsabilité</a></li>
+                <li><a href="#modifications">Modifications</a></li>
+                <li><a href="#droit">Droit applicable</a></li>
+            </ol>
+        </nav>
+
+        <h2 id="editor">1. Informations sur l'éditeur</h2>
+        <p>Le site <strong>madamefafi.com</strong> est exploité par <strong>Madame Fafi</strong>, société de droit marocain.</p>
+        <p><strong>Contact :</strong> contact@madamefafi.com</p>
+        <p><strong>Développé par :</strong> sa-pub</p>
+        <p>Le site propose des services de voyance interactive via tirage de cartes, fournis par Madame Fafi (personnalité en ligne).</p>
+
+        <hr class="separator">
+
+        <h2 id="offres">2. Objet et offres</h2>
+        <p>Madame Fafi propose une plateforme de voyance interactive permettant aux utilisateurs de réaliser des tirages de cartes dans différents univers : Oracle, Tarot, Amour, Travail, Horoscope et Question.</p>
+        <p>L'accès à certains tirages est payant via l'achat de crédits de tirage (ci-après « Crédits »).</p>
+
+        <h3>Packs de crédits disponibles</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Pack</th>
+                    <th>Prix (EUR TTC)</th>
+                    <th>Prix par tirage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>5 tirages</td>
+                    <td>4,99 €</td>
+                    <td>≈ 1,00 €</td>
+                </tr>
+                <tr>
+                    <td>15 tirages</td>
+                    <td>12,99 €</td>
+                    <td>≈ 0,87 €</td>
+                </tr>
+                <tr>
+                    <td>30 tirages</td>
+                    <td>19,99 €</td>
+                    <td>≈ 0,67 €</td>
+                </tr>
+                <tr>
+                    <td>60 tirages</td>
+                    <td>34,99 €</td>
+                    <td>≈ 0,58 €</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Les prix sont indiqués en euros (EUR) et incluent la TVA applicable. Ils sontpayables par carte bancaire via Stripe. Aucun abonnement n'est proposé pour l'instant.</p>
+
+        <hr class="separator">
+
+        <h2 id="prix">3. Prix et paiement</h2>
+        <p>Les prix des packs sont ceux affichés sur le site au moment de l'achat. Ils sont exprimés en euros (EUR) et sontpayables uniquement par carte bancaire via la plateforme de paiement sécurisée <strong>Stripe</strong>.</p>
+        <p>Le paiement est traité directement par Stripe. Madame Fafi ne stocke pas les données bancaires de l'utilisateur sur ses serveurs.</p>
+
+        <hr class="separator">
+
+        <h2 id="credits">4. Crédits de tirage</h2>
+        <p>Chaque tirage de cartes consommant un crédit, un crédit correspond à un tirage. Les Crédits sont débités au moment où le tirage est réalisé.</p>
+
+        <div class="highlight-box">
+            <p><strong>&#x26A0; Les Crédits ne sont pas remboursables une fois utilisés.</strong></p>
+        </div>
+
+        <p>Les Crédits achetés restent disponibles sur le compte de l'utilisateur jusqu'à ce qu'ils soient consommés. Il n'existe pas de date d'expiration sur les Crédits payants.</p>
+        <p>Les Crédits sont personnels et non transférables. Ils ne peuvent pas être vendus, échangés ou cédés à un tiers.</p>
+        <p>Le nombre de Crédits restants est affiché dans l'espace personnel de l'utilisateur.</p>
+
+        <hr class="separator">
+
+        <h2 id="gratuit">5. Tirages gratuits</h2>
+
+        <h3>Crédit quotidien gratuit — Oracle et Tarot</h3>
+        <p>Madame Fafi offre <strong>1 tirage gratuit par jour</strong> (Oracle ou Tarot uniquement) à chaque utilisateur inscrit. Ce crédit quotidien :</p>
+        <ul>
+            <li>est disponible une fois par période de 24 heures (calculée sur la base du fuseau horaire Europe/Paris) ;</li>
+            <li>n'est pas cumulable d'un jour sur l'autre ;</li>
+            <li>ne peut pas être converti en argent ou en Crédits payants ;</li>
+            <li>est exclusivement utilisable sur les modes Oracle et Tarot.</li>
+        </ul>
+
+        <h3>Jeu du dimanche — Tirages éphémères</h3>
+        <p>Chaque dimanche, Madame Fafi peut organiser un jeu de dés offrant des tirages éphémères. Ces tirages :</p>
+        <ul>
+            <li>sont strictement liés à l'événement du dimanche et n'existent que le temps de l'événement ;</li>
+            <li>ne peuvent pas être convertis en argent ou en Crédits payants ;</li>
+            <li>disparaissent à la fin de l'événement ou selon les conditions communiquées par Madame Fafi.</li>
+        </ul>
+
+        <hr class="separator">
+
+        <h2 id="retractation">6. Droit de rétractation</h2>
+        <p>Conformément à la <strong>Loi 31-08 relative à la protection du consommateur</strong> (Maroc), l'utilisateur dispose d'un <strong>droit de rétractation de 14 jours</strong> à compter de la date d'achat d'un pack de crédits, sans avoir à justifier de motif ni payer de pénalités.</p>
+
+        <div class="highlight-box">
+            <p><strong>&#x1F6AB; Exception :</strong> conformément à l'article 43 de la Loi 31-08, le droit de rétractation ne s'applique pas dès lors que le consommateur a consommé des crédits (contenu numérique dont la prestation a commencé avec son accord exprès avant la fin du délai de rétractation). Si des crédits ont été utilisés pendant le délai de rétractation, le droit de rétractation estcaduc pour la partie des Crédits déjà consommés. Seuls les Crédits non utilisés peuvent faire l'objet d'un remboursement.</p>
+        </div>
+
+        <p>Pour exercer son droit de rétractation, l'utilisateur doit envoyer un email à : <strong>contact@madamefafi.com</strong> en indiquant ses coordonnées et la date de l'achat.</p>
+
+        <hr class="separator">
+
+        <h2 id="propriete">7. Propriété intellectuelle</h2>
+        <p>L'ensemble des contenus présents sur Madame Fafi (textes, visuels, logos, tirages, prédictions) sont protégés par le droit d'auteur. Toute reproduction, diffusion ou utilisation à des fins commerciales est interdite sans autorisation préalable.</p>
+        <p>Les prédictions générées par l'intelligence artificielle sont personnelles à l'utilisateur et ne peuvent pas être reproduites publiquement sans accord de Madame Fafi.</p>
+
+        <hr class="separator">
+
+        <h2 id="responsabilite">8. Responsabilité</h2>
+        <p>Les tirages et prédictions proposés sur Madame Fafi sont fournis à titre de divertissement. Ils ne constituent pas des conseils médicaux, juridiques, financiers ou professionnels. L'utilisateur est seul responsable de l'utilisation qu'il fait des services.</p>
+        <p>Madame Fafi ne garantit pas que les prédictions seront exactes ou que le service sera exempt d'erreurs. La responsabilité de Madame Fafi est limitée au montant effectivement payé par l'utilisateur pour le service concerné.</p>
+
+        <hr class="separator">
+
+        <h2 id="modifications">9. Modifications des CGV</h2>
+        <p>Madame Fafi se réserve le droit de modifier les présentes conditions générales de vente à tout moment. Les modifications sont publiées sur cette page et indiquent la date de mise à jour. Les Conditions applicables sont celles en vigueur à la date de l'achat.</p>
+
+        <hr class="separator">
+
+        <h2 id="droit">10. Droit applicable et litiges</h2>
+        <p>Les présentes Conditions Générales de Vente sont régies par le <strong>droit marocain</strong>, conformément à la <strong>Loi 31-08 relative à la protection du consommateur</strong> (Maroc).</p>
+        <p>En cas de litige, l'utilisateur peut adresser une réclamation à <strong>contact@madamefafi.com</strong>. À défaut de résolution amiable, les tribunaux marocains seront seuls compétents.</p>
+
+        <p style="margin-top: 2rem; color: rgba(232,213,245,0.35);">&#x1F52E; Madame Fafi &#x2728; — madamefafi.com</p>
+    </div>
+
+    <footer>
+        <p class="footer-brand">Madame Fafi &#x2728;</p>
+        <nav class="footer-links">
+            <a href="/cgv">CGV</a>
+            <a href="/politique-de-confidentialite">Politique de confidentialité</a>
+        </nav>
+        <p class="footer-tiktok">Retrouve-moi sur TikTok : <a href="https://www.tiktok.com/@madamefafi" target="_blank">@madamefafi</a></p>
+    </footer>
+</body>
+</html>

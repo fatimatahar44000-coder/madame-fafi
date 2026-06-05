@@ -1,0 +1,32 @@
+/**
+ * Animations keyframes — Madame Fafi
+ * Loaded async to avoid blocking initial CSS parse.
+ * Utility classes that reference these keyframes stay inlined
+ * (they're just selectors, not parsing-heavy).
+ */
+@keyframes twinkle { 0% { opacity: 0.6; } 100% { opacity: 1; } }
+@keyframes gentle-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+@keyframes fortuneFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes crystalGlow { 0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.4), 0 0 60px rgba(139,92,246,0.15); } 50% { box-shadow: 0 0 35px rgba(139,92,246,0.6), 0 0 80px rgba(139,92,246,0.25); } }
+@keyframes spinOrbit { to { transform: rotate(360deg); } }
+@keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); } 25% { transform: translateY(-6px) rotate(1deg); } 75% { transform: translateY(4px) rotate(-1deg); } }
+@keyframes dice-roll { 0% { transform: rotateX(0deg) rotateY(0deg) scale(1); } 25% { transform: rotateX(180deg) rotateY(90deg) scale(1.1); } 50% { transform: rotateX(360deg) rotateY(180deg) scale(0.9); } 75% { transform: rotateX(540deg) rotateY(270deg) scale(1.05); } 100% { transform: rotateX(720deg) rotateY(360deg) scale(1); } }
+@keyframes c1-card-appear { from { opacity: 0; transform: scale(0.8) rotateY(90deg); } to { opacity: 1; transform: scale(1) rotateY(0deg); } }
+@keyframes c1-modal-in { from { opacity: 0; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes c1-btn-pulse-rose { 0%, 100% { box-shadow: 0 4px 22px rgba(236,72,153,0.35); } 50% { box-shadow: 0 4px 30px rgba(236,72,153,0.55); } }
+@keyframes c1-btn-pulse-gold { 0%, 100% { box-shadow: 0 0 12px rgba(201,168,76,0.2); } 50% { box-shadow: 0 0 20px rgba(201,168,76,0.35); } }
+@keyframes c1-bounce { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.15); } 60% { transform: scale(0.95); } 80% { transform: scale(1.05); } }
+@keyframes c1-star-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes c1-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes c1-spin-gold { to { transform: rotate(360deg); } }
+@keyframes c1-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+    .card-spread.c1-ready .oracle-card, .oracle-card.face-down, .start-btn:hover:not(:disabled),
+    .btn-primary:hover, .btn-secondary:hover, .nav-credits.c1-bounce, .rm-star-selector span,
+    .c1-skeleton, .c1-spinner, .c1-fade-in, .dice-modal.active .dice-modal-card,
+    .reviews-modal.active .reviews-modal-card, .mode-tab::after {
+        animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important;
+    }
+}
