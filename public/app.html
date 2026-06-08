@@ -4669,7 +4669,10 @@ body.impersonating { padding-top: 48px !important; }
         } catch (err) {
             clearTimeout(safetyTimer);
             console.error('Checkout error:', err);
-            alert('Impossible de créer la session de paiement. Réessaie dans un instant.');
+            const msg = err.message && err.message !== 'Erreur serveur'
+                ? err.message
+                : 'Impossible de créer la session de paiement. Vérifie ta connexion et réessaie.';
+            alert(msg);
             btn.disabled = false;
             btn.textContent = originalText;
         }

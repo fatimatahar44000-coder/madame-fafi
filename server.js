@@ -16,6 +16,9 @@ const rateLimit     = require('express-rate-limit');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Render utilise un proxy — obligatoire pour express-rate-limit
+app.set('trust proxy', 1);
+
 // ─── CONFIG ───────────────────────────────────────────────────
 const JWT_SECRET       = process.env.JWT_SECRET       || 'madamefafi-jwt-secret-change-me';
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'madamefafi-admin-secret-change-me';
@@ -41,12 +44,17 @@ const CREDIT_PACKS = {
 };
 
 // ─── AUTH HELPERS ─────────────────────────────────────────────
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Non autorisé' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.userId = decoded.userId;
+    // Fetch email for Stripe customer_email
+    try {
+      const r = await pool.query('SELECT email FROM users WHERE id=$1', [decoded.userId]);
+      req.userEmail = r.rows[0]?.email || '';
+    } catch(e) { req.userEmail = ''; }
     next();
   } catch { return res.status(401).json({ error: 'Token invalide' }); }
 }
@@ -338,7 +346,13 @@ app.use(compression());
 app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/', rateLimit({ windowMs: 15*60*1000, max: 200 }));
+app.use('/api/', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
+}));
 
 // ─── HEALTH ───────────────────────────────────────────────────
 app.get('/health', async (req,res) => {
@@ -606,7 +620,10 @@ app.post('/api/shop/create-checkout', authMiddleware, async (req, res) => {
     const session = await resp.json();
     if (!resp.ok) return res.status(500).json({ error: session.error?.message||'Erreur Stripe' });
     res.json({ url: session.url });
-  } catch(err) { res.status(500).json({ error: 'Erreur connexion paiement' }); }
+  } catch(err) {
+    console.error('[STRIPE] create-checkout error:', err.message);
+    res.status(500).json({ error: 'Erreur connexion paiement : ' + err.message });
+  }
 });
 
 app.post('/api/shop/complete-purchase', authMiddleware, async (req, res) => {
