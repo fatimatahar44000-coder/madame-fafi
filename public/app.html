@@ -3153,30 +3153,7 @@ body.impersonating { padding-top: 48px !important; }
                 </div>
 
                 <!-- User info card -->
-                <div id="user-dashboard-card" style="
-                    background:rgba(36,24,73,0.6);
-                    border:1px solid rgba(167,139,250,0.2);
-                    border-radius:14px;
-                    padding:0.85rem 1.1rem;
-                    margin-bottom:1rem;
-                    display:flex;
-                    align-items:center;
-                    justify-content:space-between;
-                    flex-wrap:wrap;
-                    gap:0.5rem;
-                ">
-                    <div style="display:flex;align-items:center;gap:0.75rem;">
-                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1rem;">👤</div>
-                        <div>
-                            <div style="font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;color:#d4a843;" id="dashboard-username">—</div>
-                            <div style="font-size:0.72rem;color:rgba(240,230,255,0.45);" id="dashboard-email">—</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                        <button onclick="openReviewsModal()" style="background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;padding:0.4rem 0.8rem;border-radius:50px;font-size:0.75rem;cursor:pointer;font-family:inherit;touch-action:manipulation;">⭐ Avis</button>
-                        <button onclick="logout()" style="background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);color:rgba(212,168,67,0.75);padding:0.4rem 0.8rem;border-radius:50px;font-size:0.75rem;cursor:pointer;font-family:inherit;touch-action:manipulation;">🚪 Déconnexion</button>
-                    </div>
-                </div>
+
 
                 <!-- Daily credit announcement banner -->
                 <div class="daily-credit-banner" id="daily-credit-banner" style="display:none;">
@@ -3912,11 +3889,7 @@ body.impersonating { padding-top: 48px !important; }
 
     let _prevCredits = null; // C-1: track for bounce animation
     function updateCredits() {
-        // Update dashboard card
-        const dbUser = document.getElementById('dashboard-username');
-        const dbEmail = document.getElementById('dashboard-email');
-        if (dbUser && user) dbUser.textContent = user.username || '';
-        if (dbEmail && user) dbEmail.textContent = user.email || '';
+
         const newCredits = user?.credits ?? 0;
         // C-1: bounce the credits badge when value changes
         if (_prevCredits !== null && newCredits !== _prevCredits) {
@@ -5263,11 +5236,18 @@ function bottomTabClick(tab) {
 }
 
 function openProfil() {
-    const sheet = document.getElementById('profil-sheet');
+    const sheet   = document.getElementById('profil-sheet');
     const overlay = document.getElementById('profil-overlay');
-    const nameEl = document.getElementById('profil-sheet-name');
-    if (nameEl && user) nameEl.textContent = user.username || 'Mon profil';
-    if (sheet) { sheet.style.display = 'block'; requestAnimationFrame(() => sheet.style.transform = 'translateY(0)'); }
+    // Fill user info
+    if (user) {
+        const nameEl    = document.getElementById('profil-sheet-name');
+        const emailEl   = document.getElementById('profil-sheet-email');
+        const creditsEl = document.getElementById('profil-sheet-credits');
+        if (nameEl)    nameEl.textContent    = user.username || 'Mon profil';
+        if (emailEl)   emailEl.textContent   = user.email || '';
+        if (creditsEl) creditsEl.textContent = user.is_unlimited ? '∞ Tirages illimités' : `${user.credits} crédit${user.credits > 1 ? 's' : ''}`;
+    }
+    if (sheet)   { sheet.style.display = 'block'; requestAnimationFrame(() => sheet.style.transform = 'translateY(0)'); }
     if (overlay) overlay.style.display = 'block';
 }
 
@@ -5378,16 +5358,77 @@ function hideFortuneLoader(loader) {
     </div>
 
     <!-- Profil bottom sheet mobile -->
-    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(26,15,46,0.98);border-radius:24px 24px 0 0;padding:1.5rem;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);">
-        <div style="width:40px;height:4px;background:rgba(139,92,246,0.35);border-radius:2px;margin:0 auto 1.5rem;"></div>
-        <div style="font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);margin-bottom:1rem;text-align:center;" id="profil-sheet-name">Mon profil</div>
-        <div style="display:flex;flex-direction:column;gap:0.75rem;">
-            <button onclick="openDiceModal();closeProfil();" style="background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);color:var(--violet-400);padding:0.9rem 1rem;border-radius:12px;font-size:0.95rem;cursor:pointer;font-family:inherit;text-align:left;">🎲 Dé du dimanche</button>
-            <button onclick="logout();" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);color:rgba(201,168,76,0.8);padding:0.9rem 1rem;border-radius:12px;font-size:0.95rem;cursor:pointer;font-family:inherit;text-align:left;">🚪 Se déconnecter</button>
+    <!-- PROFIL SHEET MOBILE -->
+    <div id="profil-overlay" onclick="closeProfil()" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);"></div>
+    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10001;background:#1e1240;border-radius:24px 24px 0 0;padding:0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);">
+        <!-- Handle bar -->
+        <div style="width:40px;height:4px;background:rgba(167,139,250,0.35);border-radius:2px;margin:0.9rem auto 1.25rem;"></div>
+
+        <!-- Nom + email -->
+        <div style="display:flex;align-items:center;gap:0.85rem;margin-bottom:1.25rem;">
+            <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">👤</div>
+            <div>
+                <div style="font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;color:#d4a843;" id="profil-sheet-name">Mon profil</div>
+                <div style="font-size:0.72rem;color:rgba(240,230,255,0.45);" id="profil-sheet-email"></div>
+                <div style="font-size:0.72rem;color:#a78bfa;margin-top:2px;" id="profil-sheet-credits"></div>
+            </div>
         </div>
-        <button onclick="closeProfil()" style="position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:rgba(232,213,245,0.4);font-size:1.2rem;cursor:pointer;">✕</button>
+
+        <!-- Boutons -->
+        <div style="display:flex;flex-direction:column;gap:0.6rem;padding-bottom:1rem;">
+            <!-- Dé du dimanche -->
+            <button onclick="openDiceModal();closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;width:100%;touch-action:manipulation;">
+                🎲 <span>Dé du dimanche</span>
+            </button>
+
+            <!-- Séparateur -->
+            <div style="height:1px;background:rgba(167,139,250,0.1);margin:0.1rem 0;"></div>
+
+            <!-- Déconnexion -->
+            <button onclick="logout();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.28);color:#f472b6;padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;font-weight:600;cursor:pointer;font-family:inherit;width:100%;touch-action:manipulation;">
+                🚪 <span>Se déconnecter</span>
+            </button>
+        </div>
     </div>
-    <div id="profil-overlay" onclick="closeProfil()" style="display:none;position:fixed;inset:0;z-index:299;background:rgba(0,0,0,0.5);"></div>
+
+    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10001;background:#1e1240;border-radius:24px 24px 0 0;padding:0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);">
+        <!-- Handle -->
+        <div style="width:40px;height:4px;background:rgba(167,139,250,0.35);border-radius:2px;margin:0.9rem auto 1.25rem;"></div>
+
+        <!-- User info header -->
+        <div style="display:flex;align-items:center;gap:0.9rem;padding:0.75rem 0 1.25rem;border-bottom:1px solid rgba(167,139,250,0.12);margin-bottom:1rem;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</div>
+            <div>
+                <div style="font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;color:#d4a843;" id="profil-sheet-name">Mon profil</div>
+                <div style="font-size:0.72rem;color:rgba(240,230,255,0.45);" id="profil-sheet-email"></div>
+                <div style="font-size:0.72rem;color:#a78bfa;margin-top:2px;" id="profil-sheet-credits"></div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;flex-direction:column;gap:0.6rem;padding-bottom:0.5rem;">
+            <button onclick="bottomTabClick('tirage');closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
+                🔮 <span>Mes tirages</span>
+            </button>
+            <button onclick="bottomTabClick('boutique');closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
+                💳 <span>Recharger mes crédits</span>
+            </button>
+            <button onclick="openDiceModal();closeProfil();" id="profil-dice-btn" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
+                🎲 <span>Dé du dimanche</span>
+            </button>
+            <button onclick="openReviewsModal();closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
+                ⭐ <span>Avis de la communauté</span>
+            </button>
+
+            <!-- Séparateur -->
+            <div style="height:1px;background:rgba(167,139,250,0.1);margin:0.25rem 0;"></div>
+
+            <!-- DÉCONNEXION — bien visible -->
+            <button onclick="logout();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.25);color:#f472b6;padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
+                🚪 <span>Se déconnecter</span>
+            </button>
+        </div>
+    </div>
 
 </body>
 </html>
