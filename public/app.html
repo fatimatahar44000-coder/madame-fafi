@@ -3675,7 +3675,9 @@ body.impersonating { padding-top: 48px !important; }
         token = null;
         user = null;
         localStorage.removeItem('mf_token');
-        showAuth();
+        localStorage.removeItem('mf_user');
+        // Retour à la landing page
+        window.location.href = '/';
     }
 
     // --- SCREENS ---
@@ -5360,7 +5362,7 @@ function hideFortuneLoader(loader) {
     <!-- Profil bottom sheet mobile -->
     <!-- PROFIL SHEET MOBILE -->
     <div id="profil-overlay" onclick="closeProfil()" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);"></div>
-    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10001;background:#1e1240;border-radius:24px 24px 0 0;padding:0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);">
+    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10001;background:#1e1240;border-radius:24px 24px 0 0;padding:0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);max-height:80vh;overflow-y:auto;">
         <!-- Handle bar -->
         <div style="width:40px;height:4px;background:rgba(167,139,250,0.35);border-radius:2px;margin:0.9rem auto 1.25rem;"></div>
 
@@ -5389,46 +5391,6 @@ function hideFortuneLoader(loader) {
                 🚪 <span>Se déconnecter</span>
             </button>
         </div>
-    </div>
-
-    <div id="profil-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:10001;background:#1e1240;border-radius:24px 24px 0 0;padding:0 1.25rem calc(1.25rem + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;overscroll-behavior:contain;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.32,0.72,0,1);">
-        <!-- Handle -->
-        <div style="width:40px;height:4px;background:rgba(167,139,250,0.35);border-radius:2px;margin:0.9rem auto 1.25rem;"></div>
-
-        <!-- User info header -->
-        <div style="display:flex;align-items:center;gap:0.9rem;padding:0.75rem 0 1.25rem;border-bottom:1px solid rgba(167,139,250,0.12);margin-bottom:1rem;">
-            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</div>
-            <div>
-                <div style="font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;color:#d4a843;" id="profil-sheet-name">Mon profil</div>
-                <div style="font-size:0.72rem;color:rgba(240,230,255,0.45);" id="profil-sheet-email"></div>
-                <div style="font-size:0.72rem;color:#a78bfa;margin-top:2px;" id="profil-sheet-credits"></div>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div style="display:flex;flex-direction:column;gap:0.6rem;padding-bottom:0.5rem;">
-            <button onclick="bottomTabClick('tirage');closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
-                🔮 <span>Mes tirages</span>
-            </button>
-            <button onclick="bottomTabClick('boutique');closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
-                💳 <span>Recharger mes crédits</span>
-            </button>
-            <button onclick="openDiceModal();closeProfil();" id="profil-dice-btn" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
-                🎲 <span>Dé du dimanche</span>
-            </button>
-            <button onclick="openReviewsModal();closeProfil();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.18);color:rgba(240,230,255,0.85);padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
-                ⭐ <span>Avis de la communauté</span>
-            </button>
-
-            <!-- Séparateur -->
-            <div style="height:1px;background:rgba(167,139,250,0.1);margin:0.25rem 0;"></div>
-
-            <!-- DÉCONNEXION — bien visible -->
-            <button onclick="logout();" style="display:flex;align-items:center;gap:0.75rem;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.25);color:#f472b6;padding:0.85rem 1rem;border-radius:12px;font-size:0.92rem;font-weight:600;cursor:pointer;font-family:inherit;text-align:left;width:100%;touch-action:manipulation;">
-                🚪 <span>Se déconnecter</span>
-            </button>
-        </div>
-    </div>
 
 </body>
 </html>
