@@ -3152,9 +3152,30 @@ body.impersonating { padding-top: 48px !important; }
                     J'ai préparé ce tirage rien que pour toi. Concentre-toi, et laisse mes cartes te guider.
                 </div>
 
-                <!-- Quick access to reviews -->
-                <div style="text-align:center;">
-                    <button class="dashboard-avis-btn" onclick="openReviewsModal()">Avis &#x2B50; Communaut&eacute;</button>
+                <!-- User info card -->
+                <div id="user-dashboard-card" style="
+                    background:rgba(36,24,73,0.6);
+                    border:1px solid rgba(167,139,250,0.2);
+                    border-radius:14px;
+                    padding:0.85rem 1.1rem;
+                    margin-bottom:1rem;
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    flex-wrap:wrap;
+                    gap:0.5rem;
+                ">
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-size:1rem;">👤</div>
+                        <div>
+                            <div style="font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;color:#d4a843;" id="dashboard-username">—</div>
+                            <div style="font-size:0.72rem;color:rgba(240,230,255,0.45);" id="dashboard-email">—</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button onclick="openReviewsModal()" style="background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);color:#a78bfa;padding:0.4rem 0.8rem;border-radius:50px;font-size:0.75rem;cursor:pointer;font-family:inherit;touch-action:manipulation;">⭐ Avis</button>
+                        <button onclick="logout()" style="background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.2);color:rgba(212,168,67,0.75);padding:0.4rem 0.8rem;border-radius:50px;font-size:0.75rem;cursor:pointer;font-family:inherit;touch-action:manipulation;">🚪 Déconnexion</button>
+                    </div>
                 </div>
 
                 <!-- Daily credit announcement banner -->
@@ -3891,6 +3912,11 @@ body.impersonating { padding-top: 48px !important; }
 
     let _prevCredits = null; // C-1: track for bounce animation
     function updateCredits() {
+        // Update dashboard card
+        const dbUser = document.getElementById('dashboard-username');
+        const dbEmail = document.getElementById('dashboard-email');
+        if (dbUser && user) dbUser.textContent = user.username || '';
+        if (dbEmail && user) dbEmail.textContent = user.email || '';
         const newCredits = user?.credits ?? 0;
         // C-1: bounce the credits badge when value changes
         if (_prevCredits !== null && newCredits !== _prevCredits) {
