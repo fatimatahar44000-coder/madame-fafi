@@ -753,8 +753,8 @@
         <p class="footer-tiktok">Retrouve-moi sur TikTok : <a href="https://www.tiktok.com/@madamefafi" target="_blank" rel="noopener">@madamefafi</a></p>
     </footer>
 
-    <script defer>
-    (function() {
+    <script>
+    // Reviews + auth check
         var selectedRating = 0;
 
         function starsHtml(rating) {
@@ -840,7 +840,6 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() { loadReviews(); renderFormArea(); });
-    })();
     </script>
 
     <script defer>
@@ -914,8 +913,8 @@
     </div>
 
 
-    <script defer>
-    (function() {
+    <script>
+    // Auth functions — no defer, no IIFE wrapper so onclick can call them
         var landingToken = localStorage.getItem('mf_token');
         var landingUser  = null;
 
@@ -1079,7 +1078,6 @@
 
         // Init
         checkLandingAuth();
-    })();
     </script>
 
 </body>
