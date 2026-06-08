@@ -3691,6 +3691,7 @@ body.impersonating { padding-top: 48px !important; }
     }
 
     function showOracle() {
+        if (typeof closeAllModals === 'function') closeAllModals();
         document.getElementById('nav').style.display = 'flex';
         // Bottom bar mobile
         const bBar = document.getElementById('bottom-tab-bar');
@@ -3717,6 +3718,7 @@ body.impersonating { padding-top: 48px !important; }
     }
 
     function showShop() {
+        if (typeof closeAllModals === 'function') closeAllModals();
         document.getElementById('nav').style.display = 'flex';
         const bBar = document.getElementById('bottom-tab-bar');
         if (bBar) { bBar.dataset.loggedIn = '1'; if (window.innerWidth <= 768) bBar.style.display = 'flex'; }
@@ -3733,6 +3735,7 @@ body.impersonating { padding-top: 48px !important; }
     var referralData = null;
 
     async function showReferral() {
+        if (typeof closeAllModals === 'function') closeAllModals();
         document.getElementById('nav').style.display = 'flex';
         const bBar = document.getElementById('bottom-tab-bar');
         if (bBar) { bBar.dataset.loggedIn = '1'; if (window.innerWidth <= 768) bBar.style.display = 'flex'; }
@@ -4878,7 +4881,7 @@ body.impersonating { padding-top: 48px !important; }
     async function openReviewsModal() {
         const modal = document.getElementById('reviews-modal');
         modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        if (window.innerWidth > 768) document.body.style.overflow = 'hidden'; // only lock scroll on desktop
         rmSelectedRating = 0;
         await rmLoadReviews();
         await rmRenderFormArea();
@@ -5186,7 +5189,33 @@ function setActiveTab(tab) {
     if (el) el.classList.add('active');
 }
 
+// Ferme TOUTES les modales ouvertes avant de naviguer
+function closeAllModals() {
+    // Reviews modal
+    const reviewsModal = document.getElementById('reviews-modal');
+    if (reviewsModal && reviewsModal.classList.contains('active')) {
+        reviewsModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    // Dice modal
+    const diceModal = document.getElementById('dice-modal');
+    if (diceModal && diceModal.classList.contains('active')) {
+        diceModal.classList.remove('active');
+    }
+    // Profil sheet
+    const profilSheet = document.getElementById('profil-sheet');
+    if (profilSheet && profilSheet.style.display !== 'none') {
+        profilSheet.style.transform = 'translateY(100%)';
+        setTimeout(() => { profilSheet.style.display = 'none'; }, 350);
+        const overlay = document.getElementById('profil-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+    // Restore scroll
+    document.body.style.overflow = '';
+}
+
 function bottomTabClick(tab) {
+    closeAllModals();
     setActiveTab(tab);
     switch(tab) {
         case 'tirage':
@@ -5200,8 +5229,6 @@ function bottomTabClick(tab) {
             break;
         case 'avis':
             openReviewsModal();
-            // Reset tab after modal closes
-            setTimeout(() => setActiveTab('tirage'), 300);
             break;
         case 'profil':
             openProfil();
