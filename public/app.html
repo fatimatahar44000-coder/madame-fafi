@@ -5103,18 +5103,18 @@ body.impersonating { padding-top: 48px !important; }
 })();
 
 function exitImpersonation() {
-    // Restaure le token admin
-    const adminToken = localStorage.getItem('madamefafi_admin_token_backup');
+    // Restaure le token admin (clé réelle utilisée par admin.html : 'admin_token')
+    const savedAdminToken = localStorage.getItem('madamefafi_admin_token_backup');
     localStorage.removeItem('madamefafi_impersonating');
     localStorage.removeItem('madamefafi_admin_token_backup');
 
-    if (adminToken) {
-        // Remet le token admin et redirige
-        localStorage.setItem('madamefafi_admin_token', adminToken);
+    if (savedAdminToken) {
+        localStorage.setItem('admin_token', savedAdminToken);
     }
-    // Nettoie le token utilisateur impersonné
-    localStorage.removeItem('madamefafi_token');
-    localStorage.removeItem('madamefafi_user');
+
+    // Nettoie les tokens de l'utilisateur impersonné (clés réelles de app.html)
+    localStorage.removeItem('mf_token');
+    localStorage.removeItem('mf_user');
 
     window.location.href = '/admin';
 }

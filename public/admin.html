@@ -1312,8 +1312,14 @@ document.getElementById('email-msg-modal').addEventListener('click', function(e)
 async function impersonateUser(userId, username) {
     if (!confirm(`⚠️ Vous allez vous connecter en tant que "${username}".\n\nVous serez redirigé vers l'app. Continuer ?`)) return;
     try {
-        const data = await api('POST', `/api/admin/impersonate/${userId}`, {});
-        if (!data.token) { alert('Erreur : token manquant'); return; }
+        // api() retourne un objet Response — il faut parser le JSON
+        const res = await api('POST', `/api/admin/impersonate/${userId}`, {});
+        if (!res) { alert('Erreur : pas de réponse serveur'); return; }
+        const data = await res.json();
+        if (!data || !data.token) {
+            alert('Erreur : ' + (data?.error || 'token manquant'));
+            return;
+        }
 
         // Sauvegarde le token admin pour pouvoir revenir
         localStorage.setItem('madamefafi_admin_token_backup', adminToken);
@@ -1323,9 +1329,9 @@ async function impersonateUser(userId, username) {
             email:    data.user.email,
         }));
 
-        // Injecte le token utilisateur
-        localStorage.setItem('madamefafi_token', data.token);
-        localStorage.setItem('madamefafi_user', JSON.stringify(data.user));
+        // Injecte le token dans la clé utilisée par app.html : 'mf_token'
+        localStorage.setItem('mf_token', data.token);
+        localStorage.setItem('mf_user', JSON.stringify(data.user));
 
         // Redirige vers l'app
         window.location.href = '/app?impersonation=1';
