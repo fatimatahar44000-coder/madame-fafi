@@ -201,7 +201,9 @@
       th:nth-child(3), td:nth-child(3) { display: none; } 
       .search-input { width: 100%; } 
     } 
-  </style> 
+          .action-btn.eye-btn { background: rgba(155,89,182,0.15); color: #a78bfa; border-color: rgba(155,89,182,0.3); font-size: 16px; padding: 4px 8px; }
+        .action-btn.eye-btn:hover { background: rgba(155,89,182,0.35); transform: scale(1.1); }
+        </style> 
 </head> 
 <body> 
  
@@ -348,7 +350,7 @@
       </div> 
       <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--muted);"> 
         🔗 Lien TikTok optimisé pour la bio de Fatima : 
-        <code style="color:var(--accent);background:rgba(155,89,182,0.12);padding:2px 7px;border-radius:4px;font-size:11px;">https://madamefafi.com?utm_source=tiktok&amp;utm_medium=bio&amp;utm_campaign=launch</code> 
+        <code style="color:var(--accent);background:rgba(155,89,182,0.12);padding:2px 7px;border-radius:4px;font-size:11px;">https://madamefafi.fr?utm_source=tiktok&amp;utm_medium=bio&amp;utm_campaign=launch</code> 
       </div> 
     </div> 
  
@@ -704,6 +706,7 @@ async function loadUsers(search = '') {
             <td>${diceBadge}</td>
             <td>
                 <div class="actions-cell">
+                    <button class="action-btn eye-btn" onclick="impersonateUser(${u.id}, '${esc(u.username)}')" title="Se connecter en tant que cet utilisateur">👁️</button>
                     <button class="action-btn success" onclick="openModal(${u.id})">Gérer</button>
                     <button class="action-btn email-btn" onclick="openEmailModal(${u.id}, '${esc(u.email)}', '${esc(u.username)}')">✉ Email</button>
                     <button class="action-btn danger" onclick="quickDelete(${u.id}, '${esc(u.email)}')">Suppr.</button>
@@ -1304,6 +1307,33 @@ function closeEmailMsgModal() {
 document.getElementById('email-msg-modal').addEventListener('click', function(e) {
     if (e.target === this) closeEmailMsgModal();
 });
+
+// ── Impersonation ──
+async function impersonateUser(userId, username) {
+    if (!confirm(`⚠️ Vous allez vous connecter en tant que "${username}".\n\nVous serez redirigé vers l'app. Continuer ?`)) return;
+    try {
+        const data = await api('POST', `/api/admin/impersonate/${userId}`, {});
+        if (!data.token) { alert('Erreur : token manquant'); return; }
+
+        // Sauvegarde le token admin pour pouvoir revenir
+        localStorage.setItem('madamefafi_admin_token_backup', adminToken);
+        localStorage.setItem('madamefafi_impersonating', JSON.stringify({
+            userId:   data.user.id,
+            username: data.user.username,
+            email:    data.user.email,
+        }));
+
+        // Injecte le token utilisateur
+        localStorage.setItem('madamefafi_token', data.token);
+        localStorage.setItem('madamefafi_user', JSON.stringify(data.user));
+
+        // Redirige vers l'app
+        window.location.href = '/app?impersonation=1';
+    } catch(err) {
+        alert('Erreur impersonation : ' + (err.message || 'inconnue'));
+    }
+}
+
 </script>
 </body>
 </html>

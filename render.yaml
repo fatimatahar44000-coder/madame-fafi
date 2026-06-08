@@ -20,4 +20,4 @@ services:
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
       - key: APP_URL
-        value: https://madamefafi.com
+        value: https://madamefafi.fr

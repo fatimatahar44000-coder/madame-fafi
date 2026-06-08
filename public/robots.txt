@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /admin.html
 
-Sitemap: https://madamefafi.com/sitemap.xml
+Sitemap: https://madamefafi.fr/sitemap.xml

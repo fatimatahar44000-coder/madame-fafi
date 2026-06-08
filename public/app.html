@@ -8,16 +8,16 @@
     <title>Madame Fafi — Tire tes cartes</title>
     <meta name="description" content="Tire tes cartes oracle gratuitement. Tarot, amour, travail, horoscope — découvre ce que les cartes ont à te dire ✨">
     <meta name="robots" content="noindex, follow">
-    <link rel="canonical" href="https://madamefafi.com">
+    <link rel="canonical" href="https://madamefafi.fr">
 
     <!-- Open Graph -->
     <meta property="og:type"        content="website">
-    <meta property="og:url"         content="https://madamefafi.com">
+    <meta property="og:url"         content="https://madamefafi.fr">
     <meta property="og:site_name"   content="Madame Fafi">
     <meta property="og:locale"      content="fr_FR">
     <meta property="og:title"       content="Madame Fafi — Voyance &amp; Tirages de Cartes Oracle">
     <meta property="og:description" content="Tire tes cartes oracle gratuitement. Tarot, amour, travail, horoscope — découvre ce que les cartes ont à te dire ✨">
-    <meta property="og:image"       content="https://madamefafi.com/og-image.webp" fetchpriority="high">
+    <meta property="og:image"       content="https://madamefafi.fr/og-image.webp" fetchpriority="high">
     <meta property="og:image:width"  content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt"   content="Madame Fafi — Voyance &amp; Tirages de Cartes Oracle">
@@ -26,7 +26,7 @@
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="Madame Fafi — Voyance &amp; Tirages de Cartes Oracle">
     <meta name="twitter:description" content="Tire tes cartes oracle gratuitement. Tarot, amour, travail, horoscope — découvre ce que les cartes ont à te dire ✨">
-    <meta name="twitter:image"       content="https://madamefafi.com/og-image.webp">
+    <meta name="twitter:image"       content="https://madamefafi.fr/og-image.webp">
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
@@ -2872,6 +2872,19 @@
     </style>
 </head>
 <body>
+<!-- ═══ BARRE IMPERSONATION ═══════════════════════════════════ -->
+<div id="impersonation-bar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;padding:10px 20px;font-family:Georgia,serif;font-size:14px;font-weight:bold;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+    <span id="impersonation-label">👁️ Mode impersonation</span>
+    &nbsp;—&nbsp;
+    <button onclick="exitImpersonation()" style="background:rgba(0,0,0,0.25);color:#fff;border:1px solid rgba(255,255,255,0.5);padding:4px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;">
+        ✖ Quitter et retourner à l'admin
+    </button>
+</div>
+<style>
+#impersonation-bar ~ * { margin-top: 0; }
+body.impersonating { padding-top: 48px !important; }
+</style>
+
     <div class="stars"></div>
 
     <!-- --- NAV (shown when logged in) --- -->
@@ -4396,7 +4409,7 @@
         ctx.font = '22px sans-serif';
         ctx.fillStyle = 'rgba(232,213,245,0.45)';
         ctx.textAlign = 'center';
-        ctx.fillText('madamefafi.com', W / 2, H - 70);
+        ctx.fillText('madamefafi.fr', W / 2, H - 70);
 
         // Convert to blob and share / download
         canvas.toBlob(async (blob) => {
@@ -4454,7 +4467,7 @@
         const modeLabel = MODES[currentMode]?.badgeLabel || currentMode;
         // Truncate to ~100 chars for WhatsApp readability
         const truncated = fortune.length > 100 ? fortune.substring(0, 100) + '…' : fortune;
-        return '🔮 Mon tirage ' + modeLabel + ' sur Madame Fafi : « ' + truncated + ' » ✨ Tire tes cartes → madamefafi.com';
+        return '🔮 Mon tirage ' + modeLabel + ' sur Madame Fafi : « ' + truncated + ' » ✨ Tire tes cartes → madamefafi.fr';
     }
 
     function shareWhatsApp() {
@@ -5069,7 +5082,44 @@
             console.warn('[PWA] SW registration failed:', err);
         });
     }
-    </script>
+    
+// ── Gestion mode impersonation ──────────────────────────────
+(function checkImpersonation() {
+    const params = new URLSearchParams(window.location.search);
+    const impersonating = localStorage.getItem('madamefafi_impersonating');
+
+    if (params.get('impersonation') === '1' && impersonating) {
+        try {
+            const info = JSON.parse(impersonating);
+            const bar  = document.getElementById('impersonation-bar');
+            const lbl  = document.getElementById('impersonation-label');
+            if (bar) {
+                bar.style.display = 'block';
+                document.body.classList.add('impersonating');
+                lbl.textContent = `👁️ Impersonation : ${info.username} (${info.email})`;
+            }
+        } catch(e) {}
+    }
+})();
+
+function exitImpersonation() {
+    // Restaure le token admin
+    const adminToken = localStorage.getItem('madamefafi_admin_token_backup');
+    localStorage.removeItem('madamefafi_impersonating');
+    localStorage.removeItem('madamefafi_admin_token_backup');
+
+    if (adminToken) {
+        // Remet le token admin et redirige
+        localStorage.setItem('madamefafi_admin_token', adminToken);
+    }
+    // Nettoie le token utilisateur impersonné
+    localStorage.removeItem('madamefafi_token');
+    localStorage.removeItem('madamefafi_user');
+
+    window.location.href = '/admin';
+}
+
+</script>
 
     <footer class="app-footer">
         <p class="app-footer-brand">Madame Fafi &#x2728;</p>

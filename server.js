@@ -65,7 +65,7 @@ function adminMiddleware(req, res, next) {
 async function sendWelcomeEmail(username, email) {
   try {
     const subject = '✨ Bienvenue chez Madame Fafi !';
-    const html = `<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;background:#0f0518;color:#fff;padding:32px;border-radius:12px;"><h1 style="color:#d946a6;">Bienvenue, ${username} ✨</h1><p style="color:#e2d9f3;">Vous avez <strong style="color:#a78bfa;">1 crédit gratuit</strong> chaque jour pour consulter les cartes.</p><a href="https://madame-fafi-6w0y.onrender.com/app" style="display:inline-block;background:linear-gradient(135deg,#d946a6,#7c3aed);color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:16px;">Commencer mon tirage 🔮</a></div>`;
+    const html = `<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;background:#0f0518;color:#fff;padding:32px;border-radius:12px;"><h1 style="color:#d946a6;">Bienvenue, ${username} ✨</h1><p style="color:#e2d9f3;">Vous avez <strong style="color:#a78bfa;">1 crédit gratuit</strong> chaque jour pour consulter les cartes.</p><a href="https://madamefafi.fr/app" style="display:inline-block;background:linear-gradient(135deg,#d946a6,#7c3aed);color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:16px;">Commencer mon tirage 🔮</a></div>`;
 
     if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       const nodemailer = require('nodemailer');
@@ -75,7 +75,7 @@ async function sendWelcomeEmail(username, email) {
         secure: parseInt(process.env.SMTP_PORT) === 465,
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
       });
-      await t.sendMail({ from: '"Madame Fafi ✨" <contact@madamefafi.com>', to: email, subject, html });
+      await t.sendMail({ from: '"Madame Fafi ✨" <contact@madamefafi.fr>', to: email, subject, html });
       console.log(`[EMAIL] Welcome sent to ${email}`);
     }
   } catch (err) {
@@ -579,7 +579,7 @@ app.post('/api/shop/create-checkout', authMiddleware, async (req, res) => {
   if (!pack) return res.status(400).json({ error: 'Pack invalide' });
   if (!process.env.STRIPE_SECRET_KEY) return res.status(500).json({ error: 'Configuration paiement manquante' });
 
-  const appUrl    = process.env.APP_URL || 'https://madame-fafi-6w0y.onrender.com';
+  const appUrl    = process.env.APP_URL || 'https://madamefafi.fr';
   const successUrl = `${appUrl}/app?payment_success=1&session_id={CHECKOUT_SESSION_ID}&pack=${packId}`;
   const cancelUrl  = `${appUrl}/app?canceled=1`;
   const auth       = 'Basic ' + Buffer.from(process.env.STRIPE_SECRET_KEY+':').toString('base64');
@@ -993,7 +993,7 @@ app.get('/api/referral-code', authMiddleware, async (req, res) => {
       code = await assignReferralCode(req.userId);
     }
     if (!code) return res.status(500).json({ error: 'Impossible de générer le code' });
-    const appUrl = process.env.APP_URL || 'https://madame-fafi-6w0y.onrender.com';
+    const appUrl = process.env.APP_URL || 'https://madamefafi.fr';
     res.json({ code, link: `${appUrl}?ref=${code}` });
   } catch(err) { console.error('[referral-code]', err); res.status(500).json({ error: 'Erreur serveur' }); }
 });
@@ -1013,7 +1013,7 @@ app.get('/api/referral-stats', authMiddleware, async (req, res) => {
               COUNT(ref.id) FILTER(WHERE ref.credited=TRUE)::int AS credited
        FROM referrals ref WHERE ref.referrer_id=$1`, [req.userId]
     );
-    const appUrl = process.env.APP_URL || 'https://madame-fafi-6w0y.onrender.com';
+    const appUrl = process.env.APP_URL || 'https://madamefafi.fr';
     res.json({
       code,
       link:              `${appUrl}?ref=${code}`,
@@ -1274,6 +1274,46 @@ app.get('/api/admin/promo-codes/:id/uses', adminMiddleware, async (req, res) => 
     );
     res.json({ uses: r.rows });
   } catch(err) { res.status(500).json({ error: 'Erreur serveur' }); }
+});
+
+// POST /api/admin/impersonate/:id — génère un token temporaire pour l'impersonation
+app.post('/api/admin/impersonate/:id', adminMiddleware, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    if (!userId) return res.status(400).json({ error: 'ID invalide' });
+
+    const r = await pool.query(
+      'SELECT id, username, email, credits, is_unlimited, is_admin FROM users WHERE id=$1',
+      [userId]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const user = r.rows[0];
+
+    // Token spécial impersonation — expire dans 2h, marqué comme impersonation
+    const token = jwt.sign(
+      { userId: user.id, impersonated: true, impersonatedBy: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+
+    console.log(`[ADMIN] Impersonation de ${user.email} (id=${user.id})`);
+
+    res.json({
+      token,
+      user: {
+        id:           user.id,
+        username:     user.username,
+        email:        user.email,
+        credits:      user.credits,
+        is_unlimited: user.is_unlimited,
+        is_admin:     user.is_admin,
+      }
+    });
+  } catch(err) {
+    console.error('[IMPERSONATE]', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
 
 // Catch-all admin API
