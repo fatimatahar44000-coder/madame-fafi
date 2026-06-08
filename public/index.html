@@ -914,171 +914,138 @@
 
 
     <script>
-    // Auth functions — no defer, no IIFE wrapper so onclick can call them
-        var landingToken = localStorage.getItem('mf_token');
-        var landingUser  = null;
+// ══ LANDING AUTH ══════════════════════════════════════════════
+var landingUser = null;
 
-        // ── Check if already logged in ──────────────────────────
-        function checkLandingAuth() {
-            var t = localStorage.getItem('mf_token');
-            if (!t) return;
-            fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + t } })
-                .then(function(r) { return r.json(); })
-                .then(function(d) {
-                    if (d.user) {
-                        landingUser = d.user;
-                        showLandingConnected(d.user);
-                    }
-                }).catch(function() {});
-        }
+function openAuthModal(tab) {
+    var overlay = document.getElementById('auth-modal-overlay');
+    if (overlay) overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    switchAuthTab(tab || 'signup');
+}
 
-        function showLandingConnected(user) {
-            var info = document.getElementById('nav-user-info');
-            var loginBtn = document.getElementById('nav-login-btn');
-            var ctaBtn = document.getElementById('nav-cta-btn');
-            var nameEl = document.getElementById('nav-username-display');
+function closeAuthModal() {
+    var overlay = document.getElementById('auth-modal-overlay');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
 
-            if (info) info.classList.add('visible');
-            if (loginBtn) loginBtn.style.display = 'none';
-            if (nameEl) nameEl.textContent = user.username || 'Mon compte';
-            // CTA becomes "Tirer les cartes"
-            if (ctaBtn) {
-                ctaBtn.textContent = '🔮 Tirer les cartes';
-                ctaBtn.href = '/app.html';
-                ctaBtn.onclick = null;
-            }
-            // Update hero CTA too
-            var heroCta = document.getElementById('hero-cta-main');
-            if (heroCta) {
-                heroCta.textContent = '🔮 Tirer mes cartes';
-                heroCta.href = '/app.html';
-                heroCta.onclick = null;
-            }
-        }
+function switchAuthTab(tab) {
+    var tLogin  = document.getElementById('tab-login');
+    var tSignup = document.getElementById('tab-signup');
+    var fLogin  = document.getElementById('form-login');
+    var fSignup = document.getElementById('form-signup');
+    if (tLogin)  tLogin.classList.toggle('active', tab === 'login');
+    if (tSignup) tSignup.classList.toggle('active', tab === 'signup');
+    if (fLogin)  fLogin.classList.toggle('active', tab === 'login');
+    if (fSignup) fSignup.classList.toggle('active', tab === 'signup');
+    var errs = document.querySelectorAll('.auth-error');
+    errs.forEach(function(e) { e.style.display = 'none'; e.textContent = ''; });
+}
 
-        // ── Modal controls ──────────────────────────────────────
-        window.openAuthModal = function(tab) {
-            var overlay = document.getElementById('auth-modal-overlay');
-            if (overlay) overlay.classList.add('open');
-            document.body.style.overflow = 'hidden';
-            if (tab) switchAuthTab(tab);
-        };
+function landingLogout() {
+    localStorage.removeItem('mf_token');
+    localStorage.removeItem('mf_user');
+    landingUser = null;
+    var info     = document.getElementById('nav-user-info');
+    var loginBtn = document.getElementById('nav-login-btn');
+    var ctaBtn   = document.getElementById('nav-cta-btn');
+    var heroCta  = document.getElementById('hero-cta-main');
+    if (info)     info.classList.remove('visible');
+    if (loginBtn) loginBtn.style.display = '';
+    if (ctaBtn)   { ctaBtn.textContent = '✨ Commencer'; ctaBtn.href = '#'; ctaBtn.setAttribute('onclick', "openAuthModal('signup'); return false;"); }
+    if (heroCta)  { heroCta.textContent = '🔮 Tire tes cartes — c\'est gratuit'; heroCta.href = '#'; heroCta.setAttribute('onclick', "openAuthModal('signup'); return false;"); }
+}
 
-        window.closeAuthModal = function() {
-            var overlay = document.getElementById('auth-modal-overlay');
-            if (overlay) overlay.classList.remove('open');
-            document.body.style.overflow = '';
-        };
+function showLandingConnected(user) {
+    var info     = document.getElementById('nav-user-info');
+    var loginBtn = document.getElementById('nav-login-btn');
+    var nameEl   = document.getElementById('nav-username-display');
+    var ctaBtn   = document.getElementById('nav-cta-btn');
+    var heroCta  = document.getElementById('hero-cta-main');
+    if (info)     info.classList.add('visible');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (nameEl)   nameEl.textContent = user.username || '';
+    if (ctaBtn)   { ctaBtn.textContent = '🔮 Tirer les cartes'; ctaBtn.href = '/app.html'; ctaBtn.removeAttribute('onclick'); }
+    if (heroCta)  { heroCta.textContent = '🔮 Tirer mes cartes'; heroCta.href = '/app.html'; heroCta.removeAttribute('onclick'); }
+}
 
-        window.switchAuthTab = function(tab) {
-            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-            document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-            document.getElementById('form-login').classList.toggle('active', tab === 'login');
-            document.getElementById('form-signup').classList.toggle('active', tab === 'signup');
-            // Clear errors
-            var errs = document.querySelectorAll('.auth-error');
-            errs.forEach(function(e) { e.style.display = 'none'; e.textContent = ''; });
-        };
-
-        // ── Login ───────────────────────────────────────────────
-        window.handleLandingLogin = async function(e) {
-            e.preventDefault();
-            var btn = document.getElementById('landing-login-btn');
-            var errEl = document.getElementById('login-error-landing');
-            errEl.style.display = 'none';
-            btn.disabled = true; btn.textContent = 'Connexion...';
-            try {
-                var res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email:    document.getElementById('landing-login-email').value.trim(),
-                        password: document.getElementById('landing-login-password').value
-                    })
-                });
-                var data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Erreur de connexion');
-                localStorage.setItem('mf_token', data.token);
-                landingUser = data.user;
-                closeAuthModal();
-                showLandingConnected(data.user);
-                // Redirect to app
-                window.location.href = '/app.html';
-            } catch(err) {
-                errEl.textContent = err.message;
-                errEl.style.display = 'block';
-                btn.disabled = false; btn.textContent = '✨ Entrer dans mon univers';
-            }
-        };
-
-        // ── Signup ──────────────────────────────────────────────
-        window.handleLandingSignup = async function(e) {
-            e.preventDefault();
-            var btn = document.getElementById('landing-signup-btn');
-            var errEl = document.getElementById('signup-error-landing');
-            errEl.style.display = 'none';
-            btn.disabled = true; btn.textContent = 'Création du compte...';
-            try {
-                var refCode = sessionStorage.getItem('mf_ref_code') || null;
-                var source  = sessionStorage.getItem('mf_traffic_source') || 'direct';
-                var res = await fetch('/api/auth/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username:      document.getElementById('landing-signup-name').value.trim(),
-                        email:         document.getElementById('landing-signup-email').value.trim(),
-                        password:      document.getElementById('landing-signup-password').value,
-                        signup_source: source,
-                        ref:           refCode
-                    })
-                });
-                var data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Erreur lors de l'inscription');
-                localStorage.setItem('mf_token', data.token);
-                landingUser = data.user;
-                closeAuthModal();
-                showLandingConnected(data.user);
-                // Redirect to app
-                window.location.href = '/app.html';
-            } catch(err) {
-                errEl.textContent = err.message;
-                errEl.style.display = 'block';
-                btn.disabled = false; btn.textContent = '🔮 Rejoindre la communauté';
-            }
-        };
-
-        // ── Logout ──────────────────────────────────────────────
-        window.landingLogout = function() {
-            localStorage.removeItem('mf_token');
-            localStorage.removeItem('mf_user');
-            landingUser = null;
-            // Reset nav
-            var info = document.getElementById('nav-user-info');
-            var loginBtn = document.getElementById('nav-login-btn');
-            var ctaBtn = document.getElementById('nav-cta-btn');
-            var heroCta = document.getElementById('hero-cta-main');
-            if (info) info.classList.remove('visible');
-            if (loginBtn) loginBtn.style.display = '';
-            if (ctaBtn) {
-                ctaBtn.textContent = '✨ Commencer';
-                ctaBtn.href = '#';
-                ctaBtn.onclick = function() { openAuthModal('signup'); return false; };
-            }
-            if (heroCta) {
-                heroCta.textContent = '🔮 Tire tes cartes — c'est gratuit';
-                heroCta.href = '#';
-                heroCta.onclick = function() { openAuthModal('signup'); return false; };
-            }
-        };
-
-        // Keyboard close
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeAuthModal();
+async function handleLandingLogin(e) {
+    e.preventDefault();
+    var btn   = document.getElementById('landing-login-btn');
+    var errEl = document.getElementById('login-error-landing');
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Connexion...';
+    try {
+        var res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email:    document.getElementById('landing-login-email').value.trim(),
+                password: document.getElementById('landing-login-password').value
+            })
         });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur de connexion');
+        localStorage.setItem('mf_token', data.token);
+        landingUser = data.user;
+        closeAuthModal();
+        window.location.href = '/app.html';
+    } catch(err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = '✨ Entrer dans mon univers';
+    }
+}
 
-        // Init
-        checkLandingAuth();
-    </script>
+async function handleLandingSignup(e) {
+    e.preventDefault();
+    var btn   = document.getElementById('landing-signup-btn');
+    var errEl = document.getElementById('signup-error-landing');
+    errEl.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Création...';
+    try {
+        var ref    = sessionStorage.getItem('mf_ref_code') || null;
+        var source = sessionStorage.getItem('mf_traffic_source') || 'direct';
+        var res = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username:      document.getElementById('landing-signup-name').value.trim(),
+                email:         document.getElementById('landing-signup-email').value.trim(),
+                password:      document.getElementById('landing-signup-password').value,
+                signup_source: source,
+                ref:           ref
+            })
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur lors de l'inscription");
+        localStorage.setItem('mf_token', data.token);
+        landingUser = data.user;
+        closeAuthModal();
+        window.location.href = '/app.html';
+    } catch(err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = '🔮 Rejoindre la communauté';
+    }
+}
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAuthModal();
+});
+
+// Check if already logged in
+document.addEventListener('DOMContentLoaded', function() {
+    var t = localStorage.getItem('mf_token');
+    if (!t) return;
+    fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + t } })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(d) { if (d && d.user) showLandingConnected(d.user); })
+        .catch(function() {});
+});
+</script>
 
 </body>
 </html>
